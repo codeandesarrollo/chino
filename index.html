@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Terapia · Nivel 1 (Auto)</title>
+<title>Terapia · Nivel 10 (Ritmo rápido · Auto)</title>
 <style>
   :root{
     --bg1:#0f172a; --bg2:#1e293b; --text:#e5e7eb; --muted:#94a3b8;
-    --card:#0b1220cc; --b:#1a2650; --acc:#60a5fa; --ok:#22c55e;
+    --card:#0b1220cc; --b:#1a2650; --ok:#22c55e; --acc:#60a5fa; --warn:#f59e0b;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
@@ -20,7 +20,7 @@
   }
   .card{
     width:min(960px,96vw); background:var(--card); border:1px solid var(--b); border-radius:18px;
-    box-shadow:0 12px 40px rgba(0,0,0,.35); overflow:hidden;
+    box-shadow:0 12px 40px rgba(0,0,0,.35); overflow:hidden; position:relative;
   }
   header{
     display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -31,24 +31,26 @@
   h1{font-size:16px; margin:0; letter-spacing:.3px}
   .hud{display:flex; gap:8px; flex-wrap:wrap}
   .tag{border:1px solid #22345f; background:#0e1830; color:#cbd5e1; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px}
-  main{display:grid; grid-template-columns:1fr 300px; gap:16px; padding:16px}
+  main{display:grid; grid-template-columns:1fr 320px; gap:16px; padding:16px}
   @media (max-width:900px){ main{grid-template-columns:1fr} .side{order:-1} }
   .stage{
     min-height:56vh; border:1px dashed #23345d; border-radius:14px; background:#0c1528;
     display:flex; align-items:center; justify-content:center; padding:16px; text-align:center; position:relative; overflow:hidden;
   }
   .big{
-    width:min(300px,70vw); height:min(300px,70vw); border-radius:999px; border:2px solid #22408c;
+    width:min(220px,60vw); height:min(220px,60vw); border-radius:999px; border:2px solid #22408c;
     background:radial-gradient(circle at 30% 30%, #60a5fa33 0 40%, transparent 41%), linear-gradient(180deg,#1d4ed8,#0b74dd);
-    box-shadow:0 14px 34px #0b5bd744, inset 0 0 30px #ffffff22;
-    display:flex; align-items:center; justify-content:center; color:#fff; font-size:26px; font-weight:900; user-select:none; cursor:pointer;
-    transition:transform .08s ease, filter .12s linear;
+    box-shadow:0 14px 34px #0b5bd744, inset 0 0 28px #ffffff22;
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px; font-weight:900; user-select:none; cursor:pointer;
+    transition:transform .06s ease, filter .12s linear;
   }
   .big:active{ transform: scale(.98); }
   .side{border:1px solid #23345d; border-radius:14px; background:#0c1528; padding:14px; display:flex; flex-direction:column; gap:12px}
   .bar{height:12px; border:1px solid #23345d; border-radius:999px; background:#0d172c; overflow:hidden}
   .bar i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#60a5fa)}
   .muted{color:var(--muted); font-size:14px}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .stat{border:1px solid #22345f; background:#0e1830; padding:8px 10px; border-radius:10px; font-size:13px}
   .overlay{
     position:absolute; inset:0; display:none; align-items:center; justify-content:center; backdrop-filter: blur(6px);
     background:#071024cc; padding:20px; text-align:center;
@@ -57,38 +59,47 @@
   .panel{background:#0c1528; border:1px solid #23345d; border-radius:16px; padding:22px; max-width:520px}
   .btn{padding:12px 16px; border-radius:14px; border:1px solid #1f2b46; background:#12203b; color:#e2e8f0; cursor:pointer; font-weight:700}
   .btn.success{background:linear-gradient(180deg,#0f766e,#10b981); border-color:#10b981}
+  .countdown{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:#071024bf; font-size:70px; font-weight:900}
 </style>
 </head>
 <body>
-  <div class="card" role="application" aria-label="Terapia dedos · Nivel 1">
+  <div class="card" role="application" aria-label="Terapia dedos · Nivel 10">
     <header>
       <div class="title">
         <div class="logo" aria-hidden="true"></div>
-        <h1>Nivel 1 · Toques grandes (auto)</h1>
+        <h1>Nivel 10 · Ritmo rápido (auto)</h1>
       </div>
       <div class="hud">
-        <span class="tag" id="hudGoal">Meta: 6 toques</span>
+        <span class="tag" id="hudGoal">Meta: 18 toques</span>
         <span class="tag" id="hudCount">Progreso: 0</span>
+        <span class="tag" id="hudTempo">TPM: 0</span>
         <span class="tag" id="hudState">Estado: Preparando…</span>
       </div>
     </header>
 
     <main>
-      <section class="stage" id="stage" aria-live="polite" aria-atomic="true">
-        <!-- El botón aparece aquí automáticamente -->
-      </section>
+      <section class="stage" id="stage" aria-live="polite" aria-atomic="true"></section>
 
       <aside class="side">
         <div>
           <h3 style="margin:0 0 6px">Instrucciones</h3>
-          <p class="muted">Toca el botón grande hasta llegar a 6. También sirven <b>Espacio</b> o <b>Enter</b>.</p>
+          <p class="muted">Toca el botón mediano lo más <b>constante</b> posible hasta llegar a 18. También sirven <b>Espacio</b> o <b>Enter</b>.</p>
         </div>
+
+        <div class="grid2">
+          <div class="stat">Tiempo: <b id="stTime">0.0 s</b></div>
+          <div class="stat">Ritmo (TPM): <b id="stTPM">0</b></div>
+          <div class="stat">Regularidad: <b id="stReg">—</b></div>
+          <div class="stat">Media intervalo: <b id="stMean">—</b></div>
+        </div>
+
         <div>
-          <h3 style="margin:0 0 6px">Progreso</h3>
+          <h3 style="margin:10px 0 6px">Progreso</h3>
           <div class="bar"><i id="bar"></i></div>
         </div>
+
         <div>
-          <h3 style="margin:0 0 6px">Opciones</h3>
+          <h3 style="margin:10px 0 6px">Opciones</h3>
           <label class="muted" style="display:flex; gap:8px; align-items:center">
             <input type="checkbox" id="optSound" checked> Sonidos
           </label>
@@ -102,8 +113,8 @@
 
     <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
       <div class="panel">
-        <h2 id="ovTitle">¡Nivel completado! 🎉</h2>
-        <p class="muted">Excelente trabajo. Puedes repetirlo para practicar.</p>
+        <h2 id="ovTitle">¡Nivel 10 completado! 🎉</h2>
+        <p class="muted" id="sumStats">Resultados:</p>
         <div style="display:flex; justify-content:center; gap:8px; margin-top:10px">
           <button class="btn success" id="btnRepetir">Repetir</button>
         </div>
@@ -115,22 +126,36 @@
 
 <script>
 (function(){
-  // Configuración nivel 1
-  const GOAL = 6;
-  const state = { inPlay:false, count:0, soundOn:true, vibeOn:true };
+  // Meta del nivel 10
+  const GOAL = 18;
+
+  // Estado y medición
+  const state = {
+    inPlay:false, count:0, soundOn:true, vibeOn:true,
+    t0:0, lastTap:0, intervals:[], timerId:null
+  };
 
   // Elementos
   const stage = document.getElementById('stage');
   const hudCount = document.getElementById('hudCount');
   const hudState = document.getElementById('hudState');
+  const hudTempo = document.getElementById('hudTempo');
   const bar = document.getElementById('bar');
   const ov = document.getElementById('overlay');
   const btnRepetir = document.getElementById('btnRepetir');
   const btnReiniciar = document.getElementById('btnReiniciar');
   const optSound = document.getElementById('optSound');
   const optVibe = document.getElementById('optVibe');
+  const aria = document.getElementById('ariaLive');
 
-  // Utilidades
+  const stTime = document.getElementById('stTime');
+  const stTPM  = document.getElementById('stTPM');
+  const stReg  = document.getElementById('stReg');
+  const stMean = document.getElementById('stMean');
+  const sumStats = document.getElementById('sumStats');
+
+  // Utils
+  function speak(t){ aria.textContent = t; }
   function progress(){
     const pct = Math.min(100, (state.count/GOAL)*100);
     bar.style.width = pct + '%';
@@ -144,70 +169,126 @@
     o.type = type; o.frequency.value = freq; g.gain.value = 0.04;
     o.connect(g); g.connect(ctx.destination); o.start(); setTimeout(()=>o.stop(), dur);
   }
+  function mean(arr){ return arr.reduce((a,b)=>a+b,0)/Math.max(1,arr.length); }
+  function std(arr){ const m=mean(arr); return Math.sqrt(arr.reduce((s,x)=>s+(x-m)*(x-m),0)/Math.max(1,arr.length)); }
+  function tpmFromIntervals(arr){ const m=mean(arr); return m? Math.round(60_000/m) : 0; } // taps por minuto
+
+  function updateStats(){
+    const elapsed = state.inPlay ? (performance.now()-state.t0)/1000 : (state.lastTap-state.t0)/1000;
+    stTime.textContent = elapsed.toFixed(1)+' s';
+    const tpm = tpmFromIntervals(state.intervals);
+    stTPM.textContent = tpm;
+    hudTempo.textContent = 'TPM: ' + tpm;
+
+    if(state.intervals.length>1){
+      const m = mean(state.intervals); const s = std(state.intervals);
+      const cv = m? (s/m) : 0; // coeficiente de variación
+      const reg = Math.max(0, Math.min(100, Math.round((1-cv)*100)));
+      stReg.textContent = reg + ' / 100';
+      stMean.textContent = (m/1000).toFixed(2)+' s';
+    }else{
+      stReg.textContent = '—';
+      stMean.textContent = '—';
+    }
+  }
+
   function clearStage(){ stage.innerHTML=''; }
 
-  // Nivel 1: TAP grande fijo
+  // Nivel 10: TAP mediano fijo + medición de ritmo
   function startLevel(){
     clearStage();
-    state.inPlay = true;
-    state.count = 0;
-    progress();
-    hudState.textContent = '¡En juego! Toca el botón.';
+    state.inPlay = false; // comenzará tras countdown
+    state.count = 0; state.intervals = []; state.t0=0; state.lastTap=0;
+    progress(); updateStats();
+    hudState.textContent = 'Listo…';
+    speak('Listo');
 
-    const btn = document.createElement('button');
-    btn.className = 'big';
-    btn.innerHTML = 'TOCAR';
-    btn.setAttribute('aria-label','Botón grande para tocar');
-    stage.appendChild(btn);
-
-    function tapped(){
-      if(!state.inPlay) return;
-      state.count++;
-      progress();
-      vibe(30); beep(520,60,'square');
-      // brillo sutil de feedback
-      btn.style.filter = 'brightness(1.06)';
-      setTimeout(()=> btn.style.filter='brightness(1)', 80);
-      if(state.count >= GOAL){
-        state.inPlay = false;
-        vibe(70); beep(660,120,'triangle'); setTimeout(()=>beep(880,120,'triangle'),120);
-        hudState.textContent = 'Completado';
-        ov.classList.add('show');
+    // Cuenta atrás breve para auto-inicio
+    const cd = document.createElement('div');
+    cd.className = 'countdown';
+    cd.textContent = '3';
+    stage.appendChild(cd);
+    let n = 3;
+    const tick = setInterval(()=>{
+      n--; cd.textContent = n>0?n:'¡Ya!';
+      if(n<=0){
+        clearInterval(tick);
+        setTimeout(()=>{ stage.removeChild(cd); run(); }, 300);
       }
+    }, 700);
+
+    function run(){
+      const btn = document.createElement('button');
+      btn.className = 'big';
+      btn.innerHTML = 'TOCAR';
+      btn.setAttribute('aria-label','Botón para toques rápidos y constantes');
+      stage.appendChild(btn);
+
+      state.inPlay = true;
+      state.t0 = performance.now();
+      hudState.textContent = '¡En juego! Ritmo constante.';
+
+      // Actualización de stats cada 100ms
+      state.timerId = setInterval(updateStats, 100);
+
+      function tapped(){
+        if(!state.inPlay) return;
+        const now = performance.now();
+        if(state.lastTap>0){ state.intervals.push(now - state.lastTap); }
+        state.lastTap = now;
+
+        state.count++; progress();
+        vibe(25); beep(560,45,'square');
+        btn.style.filter = 'brightness(1.06)'; setTimeout(()=> btn.style.filter='brightness(1)', 70);
+
+        if(state.count >= GOAL){
+          state.inPlay = false;
+          clearInterval(state.timerId);
+          vibe(70); beep(660,110,'triangle'); setTimeout(()=>beep(880,110,'triangle'),120);
+          hudState.textContent = 'Completado';
+          updateStats();
+          showSummary();
+        }
+      }
+
+      // Click/touch
+      btn.addEventListener('click', tapped);
+      // Teclado: Espacio / Enter
+      const k = (ev)=>{
+        if(ev.code==='Space' || ev.code==='Enter'){ ev.preventDefault(); tapped(); }
+      };
+      window.addEventListener('keydown', k);
+
+      // Limpieza al reiniciar
+      btn._cleanup = ()=> window.removeEventListener('keydown', k);
+      stage._cleanup = btn._cleanup;
     }
+  }
 
-    // Click/touch
-    btn.addEventListener('click', tapped);
-
-    // Teclado: Espacio / Enter
-    const k = (ev)=>{
-      if(ev.code==='Space' || ev.code==='Enter'){
-        ev.preventDefault(); tapped();
-      }
-    };
-    window.addEventListener('keydown', k);
-    // Limpieza cuando se repita el nivel
-    btn._cleanup = ()=> window.removeEventListener('keydown', k);
-    stage._cleanup = btn._cleanup;
+  function showSummary(){
+    const tpm = tpmFromIntervals(state.intervals);
+    const m = mean(state.intervals); const s = std(state.intervals);
+    const cv = m? (s/m) : 0; const reg = Math.max(0, Math.min(100, Math.round((1-cv)*100)));
+    const elapsed = (state.lastTap - state.t0)/1000;
+    sumStats.innerHTML = `Resultados: <b>${elapsed.toFixed(1)} s</b> totales · <b>${tpm} TPM</b> · Regularidad <b>${reg}/100</b> · Media intervalo <b>${(m/1000).toFixed(2)} s</b>`;
+    ov.classList.add('show');
   }
 
   function resetLevel(){
     if(stage._cleanup) try{ stage._cleanup(); }catch(e){}
+    if(state.timerId) clearInterval(state.timerId);
     ov.classList.remove('show');
     startLevel();
   }
 
-  // Eventos UI
+  // UI
   btnRepetir.addEventListener('click', resetLevel);
   btnReiniciar.addEventListener('click', resetLevel);
   optSound.addEventListener('change', ()=> state.soundOn = optSound.checked);
   optVibe.addEventListener('change',  ()=> state.vibeOn  = optVibe.checked);
 
-  // Auto-inicio al cargar (sin tocar nada)
-  window.addEventListener('load', ()=> {
-    // pequeño delay para asegurar layout
-    setTimeout(startLevel, 300);
-  });
+  // Auto-inicio al cargar
+  window.addEventListener('load', ()=> setTimeout(startLevel, 300));
 })();
 </script>
 </body>
