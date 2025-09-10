@@ -3,292 +3,437 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Terapia · Nivel 10 (Ritmo rápido · Auto)</title>
+<title>Terapia de Disparos · Entrenamiento (Auto)</title>
 <style>
   :root{
-    --bg1:#0f172a; --bg2:#1e293b; --text:#e5e7eb; --muted:#94a3b8;
-    --card:#0b1220cc; --b:#1a2650; --ok:#22c55e; --acc:#60a5fa; --warn:#f59e0b;
+    --bg1:#0f172a; --bg2:#1e293b; --text:#e5e7eb; --muted:#94a3b8; --b:#1f2b46;
+    --lane:#0c1528; --card:#0b1220cc; --accent:#60a5fa; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0; font-family:system-ui,Segoe UI,Roboto,Inter,sans-serif; color:var(--text);
-    background: radial-gradient(1200px 800px at 20% 10%, #0b1020 0, transparent 60%),
-                radial-gradient(900px 600px at 80% 90%, #0a182f 0, transparent 60%),
-                linear-gradient(135deg,var(--bg1),var(--bg2));
-    display:flex; align-items:center; justify-content:center; padding:18px;
+    background:
+      radial-gradient(900px 600px at 80% 90%, #0a182f 0, transparent 60%),
+      radial-gradient(1200px 800px at 20% 10%, #0b1020 0, transparent 60%),
+      linear-gradient(135deg,var(--bg1),var(--bg2));
+    display:flex; align-items:center; justify-content:center; padding:16px;
   }
-  .card{
-    width:min(960px,96vw); background:var(--card); border:1px solid var(--b); border-radius:18px;
-    box-shadow:0 12px 40px rgba(0,0,0,.35); overflow:hidden; position:relative;
+  .wrap{
+    width:min(1000px,96vw); background:var(--card); border:1px solid var(--b); border-radius:18px;
+    box-shadow:0 16px 40px rgba(0,0,0,.35); overflow:hidden; position:relative;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   }
   header{
     display:flex; align-items:center; justify-content:space-between; gap:10px;
-    padding:14px 16px; border-bottom:1px solid var(--b); background:#0e1930aa;
+    padding:12px 14px; border-bottom:1px solid var(--b); background:#0b1428bf;
   }
   .title{display:flex; align-items:center; gap:10px}
-  .logo{width:32px; height:32px; border-radius:12px; background:conic-gradient(from 0deg,#60a5fa,#22c55e,#60a5fa)}
-  h1{font-size:16px; margin:0; letter-spacing:.3px}
+  .logo{width:34px;height:34px;border-radius:12px;background:conic-gradient(from 0deg,#60a5fa,#22c55e,#60a5fa)}
+  h1{margin:0;font-size:16px}
   .hud{display:flex; gap:8px; flex-wrap:wrap}
-  .tag{border:1px solid #22345f; background:#0e1830; color:#cbd5e1; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px}
-  main{display:grid; grid-template-columns:1fr 320px; gap:16px; padding:16px}
-  @media (max-width:900px){ main{grid-template-columns:1fr} .side{order:-1} }
+  .tag{border:1px solid #22345f; background:#0e1830; color:#cbd5e1; padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px}
+  .main{display:grid; grid-template-columns:1fr 300px; gap:12px; padding:12px}
+  @media (max-width:900px){ .main{grid-template-columns:1fr} .side{order:-1} }
   .stage{
-    min-height:56vh; border:1px dashed #23345d; border-radius:14px; background:#0c1528;
-    display:flex; align-items:center; justify-content:center; padding:16px; text-align:center; position:relative; overflow:hidden;
+    border:1px solid var(--b); border-radius:14px; background:var(--lane); position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center; min-height:62vh;
   }
-  .big{
-    width:min(220px,60vw); height:min(220px,60vw); border-radius:999px; border:2px solid #22408c;
-    background:radial-gradient(circle at 30% 30%, #60a5fa33 0 40%, transparent 41%), linear-gradient(180deg,#1d4ed8,#0b74dd);
-    box-shadow:0 14px 34px #0b5bd744, inset 0 0 28px #ffffff22;
-    display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px; font-weight:900; user-select:none; cursor:pointer;
-    transition:transform .06s ease, filter .12s linear;
+  canvas{ display:block; width:100%; height:100%; background:
+    linear-gradient(0deg, #0b1426 0, #0c162a 100%);
+    border-radius:14px;
   }
-  .big:active{ transform: scale(.98); }
-  .side{border:1px solid #23345d; border-radius:14px; background:#0c1528; padding:14px; display:flex; flex-direction:column; gap:12px}
-  .bar{height:12px; border:1px solid #23345d; border-radius:999px; background:#0d172c; overflow:hidden}
+  .lanesOverlay{position:absolute; inset:0; pointer-events:none; display:grid; grid-template-columns:repeat(3,1fr); gap:0}
+  .lanesOverlay i{border-left:1px dashed #22345f55; border-right:1px dashed #22345f55}
+  .side{
+    border:1px solid var(--b); border-radius:14px; background:#0c1528; padding:12px; display:flex; flex-direction:column; gap:10px
+  }
+  .controls{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;
+  }
+  .btn{
+    padding:14px 16px; border-radius:14px; border:1px solid #1f2b46; background:#12203b; color:#e2e8f0;
+    cursor:pointer; font-weight:900; font-size:18px; user-select:none; text-align:center;
+    box-shadow:0 8px 22px rgba(0,0,0,.25); transition:transform .06s ease, box-shadow .2s ease;
+  }
+  .btn:active{ transform:scale(.98) }
+  .btn.primary{ background:linear-gradient(180deg,#1e3a8a,#1d4ed8) }
+  .btn.fire{ grid-column: span 2; font-size:22px; background:linear-gradient(180deg,#0f766e,#10b981) }
+  .opt{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:14px}
+  .bar{height:12px; border:1px solid #22345f; border-radius:999px; background:#0d172c; overflow:hidden}
   .bar i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#60a5fa)}
-  .muted{color:var(--muted); font-size:14px}
-  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-  .stat{border:1px solid #22345f; background:#0e1830; padding:8px 10px; border-radius:10px; font-size:13px}
   .overlay{
     position:absolute; inset:0; display:none; align-items:center; justify-content:center; backdrop-filter: blur(6px);
-    background:#071024cc; padding:20px; text-align:center;
+    background:#071024d0; text-align:center; padding:20px; z-index:10;
   }
   .overlay.show{display:flex}
-  .panel{background:#0c1528; border:1px solid #23345d; border-radius:16px; padding:22px; max-width:520px}
-  .btn{padding:12px 16px; border-radius:14px; border:1px solid #1f2b46; background:#12203b; color:#e2e8f0; cursor:pointer; font-weight:700}
-  .btn.success{background:linear-gradient(180deg,#0f766e,#10b981); border-color:#10b981}
-  .countdown{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:#071024bf; font-size:70px; font-weight:900}
+  .panel{background:#0c1528; border:1px solid #22345f; border-radius:16px; padding:22px; max-width:540px}
+  .panel h2{margin:0 0 8px}
+  .panel p{margin:6px 0; color:var(--muted)}
+  .panic{
+    position:absolute; bottom:12px; left:12px; right:12px; display:flex; gap:8px; z-index:6;
+  }
+  .panic .btn{flex:1}
 </style>
 </head>
 <body>
-  <div class="card" role="application" aria-label="Terapia dedos · Nivel 10">
-    <header>
-      <div class="title">
-        <div class="logo" aria-hidden="true"></div>
-        <h1>Nivel 10 · Ritmo rápido (auto)</h1>
-      </div>
-      <div class="hud">
-        <span class="tag" id="hudGoal">Meta: 18 toques</span>
-        <span class="tag" id="hudCount">Progreso: 0</span>
-        <span class="tag" id="hudTempo">TPM: 0</span>
-        <span class="tag" id="hudState">Estado: Preparando…</span>
-      </div>
-    </header>
-
-    <main>
-      <section class="stage" id="stage" aria-live="polite" aria-atomic="true"></section>
-
-      <aside class="side">
-        <div>
-          <h3 style="margin:0 0 6px">Instrucciones</h3>
-          <p class="muted">Toca el botón mediano lo más <b>constante</b> posible hasta llegar a 18. También sirven <b>Espacio</b> o <b>Enter</b>.</p>
-        </div>
-
-        <div class="grid2">
-          <div class="stat">Tiempo: <b id="stTime">0.0 s</b></div>
-          <div class="stat">Ritmo (TPM): <b id="stTPM">0</b></div>
-          <div class="stat">Regularidad: <b id="stReg">—</b></div>
-          <div class="stat">Media intervalo: <b id="stMean">—</b></div>
-        </div>
-
-        <div>
-          <h3 style="margin:10px 0 6px">Progreso</h3>
-          <div class="bar"><i id="bar"></i></div>
-        </div>
-
-        <div>
-          <h3 style="margin:10px 0 6px">Opciones</h3>
-          <label class="muted" style="display:flex; gap:8px; align-items:center">
-            <input type="checkbox" id="optSound" checked> Sonidos
-          </label>
-          <label class="muted" style="display:flex; gap:8px; align-items:center">
-            <input type="checkbox" id="optVibe" checked> Vibración
-          </label>
-          <button class="btn" id="btnReiniciar" style="margin-top:6px">Reiniciar nivel</button>
-        </div>
-      </aside>
-    </main>
-
-    <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
-      <div class="panel">
-        <h2 id="ovTitle">¡Nivel 10 completado! 🎉</h2>
-        <p class="muted" id="sumStats">Resultados:</p>
-        <div style="display:flex; justify-content:center; gap:8px; margin-top:10px">
-          <button class="btn success" id="btnRepetir">Repetir</button>
-        </div>
-      </div>
+<div class="wrap" role="application" aria-label="Terapia de disparos">
+  <header>
+    <div class="title"><div class="logo" aria-hidden="true"></div><h1>Disparos · Entrenamiento (auto)</h1></div>
+    <div class="hud">
+      <span class="tag" id="tagScore">Puntos: 0</span>
+      <span class="tag" id="tagHits">Derribos: 0 / 15</span>
+      <span class="tag" id="tagLives">Vidas: 3</span>
     </div>
+  </header>
 
-    <span id="ariaLive" style="position:absolute; left:-9999px" aria-live="assertive"></span>
+  <div class="main">
+    <section class="stage" id="stage">
+      <canvas id="game" width="900" height="600" aria-label="Zona de juego"></canvas>
+      <div class="lanesOverlay" aria-hidden="true"><i></i><i></i><i></i></div>
+
+      <!-- Botones de emergencia grandes en móvil -->
+      <div class="panic">
+        <button class="btn" id="btnLeft">←</button>
+        <button class="btn fire" id="btnFire">DISPARAR</button>
+        <button class="btn" id="btnRight">→</button>
+      </div>
+    </section>
+
+    <aside class="side">
+      <div>
+        <h3 style="margin:0 0 6px">Objetivo</h3>
+        <p style="margin:0; color:var(--muted)">Derriba <b>15 enemigos</b>. Mueve la mira y dispara. También puedes tocar al enemigo directamente.</p>
+      </div>
+      <div>
+        <h3 style="margin:6px 0">Progreso</h3>
+        <div class="bar"><i id="bar"></i></div>
+      </div>
+      <div>
+        <h3 style="margin:6px 0">Opciones</h3>
+        <label class="opt"><input type="checkbox" id="optAim" checked> Imán de mira (autoapunta a la calle con enemigo)</label>
+        <label class="opt"><input type="checkbox" id="optSound" checked> Sonidos</label>
+        <label class="opt"><input type="checkbox" id="optVibe" checked> Vibración</label>
+      </div>
+      <div class="controls">
+        <button class="btn" id="ctlLeft">← Izquierda</button>
+        <button class="btn" id="ctlRight">Derecha →</button>
+        <button class="btn fire" id="ctlFire">DISPARAR</button>
+      </div>
+    </aside>
   </div>
 
-<script>
-(function(){
-  // Meta del nivel 10
-  const GOAL = 18;
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
+    <div class="panel">
+      <h2 id="ovTitle">¡Entrenamiento completado! 🎯</h2>
+      <p id="ovText">Excelente trabajo. ¿Otra ronda?</p>
+      <div style="display:flex; gap:8px; justify-content:center; margin-top:10px">
+        <button class="btn" id="btnAgain">Repetir</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-  // Estado y medición
-  const state = {
-    inPlay:false, count:0, soundOn:true, vibeOn:true,
-    t0:0, lastTap:0, intervals:[], timerId:null
+<script>
+(() => {
+  /* ============ Parámetros del nivel ============ */
+  const GOAL_KILLS = 15;
+  const START_LIVES = 3;
+  const LANES = 3;
+  const ENEMY_SPAWN_MS = 900;     // cada cuánto aparece
+  const ENEMY_SPEED = 90;         // px/s, baja velocidad para accesibilidad
+  const BULLET_SPEED = 600;       // px/s
+  const ENEMY_SIZE = 64;          // px (grande)
+  const RETICLE_Y = 520;          // y de la mira
+  const FIRE_COOLDOWN = 180;      // ms entre disparos
+  const TAP_KILL_HITBOX = 42;     // radio táctil grande
+
+  /* ============ Estado ============ */
+  const cvs = document.getElementById('game');
+  const ctx = cvs.getContext('2d');
+  const stage = document.getElementById('stage');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let W = cvs.width, H = cvs.height;
+
+  const ui = {
+    tagScore: document.getElementById('tagScore'),
+    tagHits:  document.getElementById('tagHits'),
+    tagLives: document.getElementById('tagLives'),
+    bar:      document.getElementById('bar'),
+    overlay:  document.getElementById('overlay'),
+    btnAgain: document.getElementById('btnAgain'),
+    optAim:   document.getElementById('optAim'),
+    optSound: document.getElementById('optSound'),
+    optVibe:  document.getElementById('optVibe'),
+    buttons: {
+      left: document.getElementById('btnLeft'),
+      right:document.getElementById('btnRight'),
+      fire: document.getElementById('btnFire'),
+      ctlLeft: document.getElementById('ctlLeft'),
+      ctlRight:document.getElementById('ctlRight'),
+      ctlFire: document.getElementById('ctlFire')
+    }
   };
 
-  // Elementos
-  const stage = document.getElementById('stage');
-  const hudCount = document.getElementById('hudCount');
-  const hudState = document.getElementById('hudState');
-  const hudTempo = document.getElementById('hudTempo');
-  const bar = document.getElementById('bar');
-  const ov = document.getElementById('overlay');
-  const btnRepetir = document.getElementById('btnRepetir');
-  const btnReiniciar = document.getElementById('btnReiniciar');
-  const optSound = document.getElementById('optSound');
-  const optVibe = document.getElementById('optVibe');
-  const aria = document.getElementById('ariaLive');
+  const state = {
+    running: false,
+    lane: 1,               // 0..2
+    lastFire: 0,
+    score: 0,
+    hits: 0,
+    lives: START_LIVES,
+    enemies: [],
+    bullets: [],
+    spawnTimer: 0,
+    aimAssist: true,
+    soundOn: true,
+    vibeOn: true,
+    lastT: 0,
+    raf: null
+  };
 
-  const stTime = document.getElementById('stTime');
-  const stTPM  = document.getElementById('stTPM');
-  const stReg  = document.getElementById('stReg');
-  const stMean = document.getElementById('stMean');
-  const sumStats = document.getElementById('sumStats');
-
-  // Utils
-  function speak(t){ aria.textContent = t; }
-  function progress(){
-    const pct = Math.min(100, (state.count/GOAL)*100);
-    bar.style.width = pct + '%';
-    hudCount.textContent = 'Progreso: ' + state.count + ' / ' + GOAL;
-  }
+  /* ============ Utilidades ============ */
+  function laneX(l){ return (W * (1/(LANES*2) + l/LANES)); }
+  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
   function vibe(ms=40){ if(state.vibeOn && 'vibrate' in navigator) navigator.vibrate(ms); }
   function beep(freq=520, dur=70, type='square'){
     if(!state.soundOn) return;
-    const ctx = beep.ctx || (beep.ctx = new (window.AudioContext||window.webkitAudioContext)());
-    const o = ctx.createOscillator(); const g = ctx.createGain();
-    o.type = type; o.frequency.value = freq; g.gain.value = 0.04;
-    o.connect(g); g.connect(ctx.destination); o.start(); setTimeout(()=>o.stop(), dur);
+    const ctxA = beep.ctx || (beep.ctx = new (window.AudioContext||window.webkitAudioContext)());
+    const o = ctxA.createOscillator(); const g = ctxA.createGain();
+    o.type=type; o.frequency.value=freq; g.gain.value=0.04;
+    o.connect(g); g.connect(ctxA.destination); o.start(); setTimeout(()=>o.stop(), dur);
   }
-  function mean(arr){ return arr.reduce((a,b)=>a+b,0)/Math.max(1,arr.length); }
-  function std(arr){ const m=mean(arr); return Math.sqrt(arr.reduce((s,x)=>s+(x-m)*(x-m),0)/Math.max(1,arr.length)); }
-  function tpmFromIntervals(arr){ const m=mean(arr); return m? Math.round(60_000/m) : 0; } // taps por minuto
+  function progressBar(){ ui.bar.style.width = Math.min(100, (state.hits/GOAL_KILLS)*100) + '%'; }
+  function updateHUD(){
+    ui.tagScore.textContent = 'Puntos: ' + state.score;
+    ui.tagHits.textContent  = 'Derribos: ' + state.hits + ' / ' + GOAL_KILLS;
+    ui.tagLives.textContent = 'Vidas: ' + state.lives;
+    progressBar();
+  }
 
-  function updateStats(){
-    const elapsed = state.inPlay ? (performance.now()-state.t0)/1000 : (state.lastTap-state.t0)/1000;
-    stTime.textContent = elapsed.toFixed(1)+' s';
-    const tpm = tpmFromIntervals(state.intervals);
-    stTPM.textContent = tpm;
-    hudTempo.textContent = 'TPM: ' + tpm;
+  /* ============ Redimensionado ============ */
+  function fit(){
+    const rect = stage.getBoundingClientRect();
+    const w = Math.max(600, rect.width - 2);
+    const h = Math.max(380, rect.height - 2);
+    cvs.style.width = w+'px'; cvs.style.height = h+'px';
+    cvs.width = Math.round(w*dpr); cvs.height = Math.round(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W = w; H = h;
+  }
+  window.addEventListener('resize', fit, {passive:true}); fit();
 
-    if(state.intervals.length>1){
-      const m = mean(state.intervals); const s = std(state.intervals);
-      const cv = m? (s/m) : 0; // coeficiente de variación
-      const reg = Math.max(0, Math.min(100, Math.round((1-cv)*100)));
-      stReg.textContent = reg + ' / 100';
-      stMean.textContent = (m/1000).toFixed(2)+' s';
-    }else{
-      stReg.textContent = '—';
-      stMean.textContent = '—';
+  /* ============ Entidades ============ */
+  function spawnEnemy(){
+    const lane = Math.floor(Math.random()*LANES);
+    const x = laneX(lane);
+    state.enemies.push({ lane, x, y: -ENEMY_SIZE, r: ENEMY_SIZE*0.5 });
+  }
+
+  function fire(){
+    const now = performance.now();
+    if(now - state.lastFire < FIRE_COOLDOWN) return;
+    state.lastFire = now;
+    // Asistencia: si hay enemigo en otra calle, mueve la mira a su calle
+    if(state.aimAssist){
+      const ahead = state.enemies.filter(e=>e.y<RETICLE_Y).sort((a,b)=>a.y-b.y)[0];
+      if(ahead) state.lane = ahead.lane;
+    }
+    // Disparo recto en la calle actual
+    const x = laneX(state.lane);
+    state.bullets.push({ x, y: RETICLE_Y, r: 6 });
+    beep(620,60,'square'); vibe(20);
+  }
+
+  /* ============ Colisiones ============ */
+  function dist2(ax,ay,bx,by){ const dx=ax-bx, dy=ay-by; return dx*dx+dy*dy; }
+  function hitEnemyAt(x,y, r=TAP_KILL_HITBOX){
+    for(let i=0;i<state.enemies.length;i++){
+      const e = state.enemies[i];
+      if(dist2(x,y,e.x,e.y) <= (e.r+r)*(e.r+r)){
+        // eliminar
+        state.enemies.splice(i,1);
+        onKill(e);
+        return true;
+      }
+    }
+    return false;
+  }
+  function onKill(e){
+    state.score += 100;
+    state.hits  += 1;
+    beep(760,90,'triangle'); setTimeout(()=>beep(880,70,'triangle'),60); vibe(40);
+    updateHUD();
+    if(state.hits >= GOAL_KILLS){
+      endGame(true);
     }
   }
 
-  function clearStage(){ stage.innerHTML=''; }
+  /* ============ Bucle ============ */
+  function step(t){
+    if(!state.running) return;
+    const dt = (state.lastT? (t-state.lastT):16)/1000; state.lastT = t;
 
-  // Nivel 10: TAP mediano fijo + medición de ritmo
-  function startLevel(){
-    clearStage();
-    state.inPlay = false; // comenzará tras countdown
-    state.count = 0; state.intervals = []; state.t0=0; state.lastTap=0;
-    progress(); updateStats();
-    hudState.textContent = 'Listo…';
-    speak('Listo');
+    // Spawns
+    state.spawnTimer += dt*1000;
+    if(state.spawnTimer >= ENEMY_SPAWN_MS){
+      state.spawnTimer = 0; spawnEnemy();
+    }
 
-    // Cuenta atrás breve para auto-inicio
-    const cd = document.createElement('div');
-    cd.className = 'countdown';
-    cd.textContent = '3';
-    stage.appendChild(cd);
-    let n = 3;
-    const tick = setInterval(()=>{
-      n--; cd.textContent = n>0?n:'¡Ya!';
-      if(n<=0){
-        clearInterval(tick);
-        setTimeout(()=>{ stage.removeChild(cd); run(); }, 300);
-      }
-    }, 700);
+    // Mover enemigos
+    for(const e of state.enemies){ e.y += ENEMY_SPEED*dt; }
 
-    function run(){
-      const btn = document.createElement('button');
-      btn.className = 'big';
-      btn.innerHTML = 'TOCAR';
-      btn.setAttribute('aria-label','Botón para toques rápidos y constantes');
-      stage.appendChild(btn);
+    // Mover balas
+    for(const b of state.bullets){ b.y -= BULLET_SPEED*dt; }
 
-      state.inPlay = true;
-      state.t0 = performance.now();
-      hudState.textContent = '¡En juego! Ritmo constante.';
-
-      // Actualización de stats cada 100ms
-      state.timerId = setInterval(updateStats, 100);
-
-      function tapped(){
-        if(!state.inPlay) return;
-        const now = performance.now();
-        if(state.lastTap>0){ state.intervals.push(now - state.lastTap); }
-        state.lastTap = now;
-
-        state.count++; progress();
-        vibe(25); beep(560,45,'square');
-        btn.style.filter = 'brightness(1.06)'; setTimeout(()=> btn.style.filter='brightness(1)', 70);
-
-        if(state.count >= GOAL){
-          state.inPlay = false;
-          clearInterval(state.timerId);
-          vibe(70); beep(660,110,'triangle'); setTimeout(()=>beep(880,110,'triangle'),120);
-          hudState.textContent = 'Completado';
-          updateStats();
-          showSummary();
+    // Colisión bala-enemigo
+    outer: for(let i=state.bullets.length-1;i>=0;i--){
+      const b = state.bullets[i];
+      for(let j=state.enemies.length-1;j>=0;j--){
+        const e = state.enemies[j];
+        if(dist2(b.x,b.y, e.x,e.y) <= (e.r+b.r)*(e.r+b.r)){
+          state.bullets.splice(i,1);
+          state.enemies.splice(j,1);
+          onKill(e);
+          continue outer;
         }
       }
-
-      // Click/touch
-      btn.addEventListener('click', tapped);
-      // Teclado: Espacio / Enter
-      const k = (ev)=>{
-        if(ev.code==='Space' || ev.code==='Enter'){ ev.preventDefault(); tapped(); }
-      };
-      window.addEventListener('keydown', k);
-
-      // Limpieza al reiniciar
-      btn._cleanup = ()=> window.removeEventListener('keydown', k);
-      stage._cleanup = btn._cleanup;
     }
+
+    // Enemigos que llegan abajo
+    for(let i=state.enemies.length-1;i>=0;i--){
+      const e = state.enemies[i];
+      if(e.y - e.r > H){
+        state.enemies.splice(i,1);
+        state.lives -= 1;
+        beep(200,120,'sawtooth'); vibe(80);
+        updateHUD();
+        if(state.lives <= 0){ endGame(false); }
+      }
+    }
+
+    // Limpiar balas fuera
+    state.bullets = state.bullets.filter(b=> b.y + b.r > 0);
+
+    // Dibujo
+    draw();
+
+    // Siguiente frame
+    state.raf = requestAnimationFrame(step);
   }
 
-  function showSummary(){
-    const tpm = tpmFromIntervals(state.intervals);
-    const m = mean(state.intervals); const s = std(state.intervals);
-    const cv = m? (s/m) : 0; const reg = Math.max(0, Math.min(100, Math.round((1-cv)*100)));
-    const elapsed = (state.lastTap - state.t0)/1000;
-    sumStats.innerHTML = `Resultados: <b>${elapsed.toFixed(1)} s</b> totales · <b>${tpm} TPM</b> · Regularidad <b>${reg}/100</b> · Media intervalo <b>${(m/1000).toFixed(2)} s</b>`;
-    ov.classList.add('show');
+  /* ============ Dibujo ============ */
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // Fondo suave
+    const grd = ctx.createLinearGradient(0,0,0,H);
+    grd.addColorStop(0,'#0b1426'); grd.addColorStop(1,'#0c162a');
+    ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
+
+    // Calles
+    for(let l=1;l<LANES;l++){
+      const x = l*W/LANES;
+      ctx.strokeStyle = '#22345f55'; ctx.setLineDash([8,6]);
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // Enemigos (discos grandes brillantes)
+    for(const e of state.enemies){
+      ctx.save();
+      const glow = ctx.createRadialGradient(e.x, e.y, e.r*0.2, e.x, e.y, e.r);
+      glow.addColorStop(0,'#60a5fa'); glow.addColorStop(1,'#1b3b77');
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#8ec5ff'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.restore();
+    }
+
+    // Balas
+    ctx.fillStyle = '#a7f3d0';
+    for(const b of state.bullets){
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+      ctx.fillRect(b.x-2, b.y, 4, 12);
+    }
+
+    // Mira
+    const rx = laneX(state.lane), ry = RETICLE_Y;
+    ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(rx,ry,20,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(rx-26,ry); ctx.lineTo(rx+26,ry);
+    ctx.moveTo(rx,ry-26); ctx.lineTo(rx,ry+26); ctx.stroke();
   }
 
-  function resetLevel(){
-    if(stage._cleanup) try{ stage._cleanup(); }catch(e){}
-    if(state.timerId) clearInterval(state.timerId);
-    ov.classList.remove('show');
-    startLevel();
+  /* ============ Control ============ */
+  function moveLeft(){ state.lane = clamp(state.lane-1, 0, LANES-1); vibe(15); }
+  function moveRight(){ state.lane = clamp(state.lane+1, 0, LANES-1); vibe(15); }
+
+  // Controles táctiles / botones grandes
+  ui.buttons.left.addEventListener('click', moveLeft);
+  ui.buttons.right.addEventListener('click', moveRight);
+  ui.buttons.fire.addEventListener('click', fire);
+
+  ui.buttons.ctlLeft.addEventListener('click', moveLeft);
+  ui.buttons.ctlRight.addEventListener('click', moveRight);
+  ui.buttons.ctlFire.addEventListener('click', fire);
+
+  // Teclado
+  window.addEventListener('keydown', (e)=>{
+    if(e.code==='ArrowLeft' || e.code==='KeyA'){ e.preventDefault(); moveLeft(); }
+    if(e.code==='ArrowRight'|| e.code==='KeyD'){ e.preventDefault(); moveRight(); }
+    if(e.code==='Space' || e.code==='Enter'){ e.preventDefault(); fire(); }
+  });
+
+  // Tocar directamente un enemigo para derribarlo
+  cvs.addEventListener('click', (e)=>{
+    const rect = cvs.getBoundingClientRect();
+    const x = (e.clientX - rect.left), y = (e.clientY - rect.top);
+    if(hitEnemyAt(x, y)){ /* ya suma dentro de onKill */ }
+  });
+
+  // Opciones
+  ui.optAim.addEventListener('change', ()=> state.aimAssist = ui.optAim.checked);
+  ui.optSound.addEventListener('change', ()=> state.soundOn = ui.optSound.checked);
+  ui.optVibe.addEventListener('change', ()=> state.vibeOn  = ui.optVibe.checked);
+
+  // Repetir
+  ui.btnAgain.addEventListener('click', ()=> start());
+
+  /* ============ Inicio / Fin ============ */
+  function start(){
+    // Reset
+    cancelAnimationFrame(state.raf||0);
+    state.running = true;
+    state.lane = 1;
+    state.lastFire = 0;
+    state.score = 0; state.hits = 0; state.lives = START_LIVES;
+    state.enemies.length = 0; state.bullets.length = 0;
+    state.spawnTimer = 400; // que aparezca pronto
+    state.lastT = 0;
+    ui.overlay.classList.remove('show');
+    updateHUD();
+    step(performance.now());
   }
 
-  // UI
-  btnRepetir.addEventListener('click', resetLevel);
-  btnReiniciar.addEventListener('click', resetLevel);
-  optSound.addEventListener('change', ()=> state.soundOn = optSound.checked);
-  optVibe.addEventListener('change',  ()=> state.vibeOn  = optVibe.checked);
+  function endGame(win){
+    state.running = false;
+    cancelAnimationFrame(state.raf||0);
+    const ovText = document.getElementById('ovText');
+    const title  = document.getElementById('ovTitle');
+    if(win){
+      title.textContent = '¡Entrenamiento completado! 🎯';
+      ovText.textContent = `Puntos: ${state.score} · Derribos: ${state.hits}/${GOAL_KILLS}`;
+      beep(800,120,'triangle'); setTimeout(()=>beep(920,100,'triangle'),100);
+    }else{
+      title.textContent = 'Se acabaron las vidas 😵';
+      ovText.textContent = `Puntos: ${state.score} · Derribos: ${state.hits}/${GOAL_KILLS}. ¡Inténtalo de nuevo!`;
+      beep(200,220,'sawtooth');
+    }
+    ui.overlay.classList.add('show');
+  }
 
-  // Auto-inicio al cargar
-  window.addEventListener('load', ()=> setTimeout(startLevel, 300));
+  // Auto-inicio
+  window.addEventListener('load', ()=> setTimeout(start, 300));
 })();
 </script>
 </body>
