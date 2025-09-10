@@ -3,24 +3,24 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Terapia de Disparos · Entrenamiento (Auto)</title>
+<title>Arcade Terapia: Galaxy Tap (Auto)</title>
 <style>
   :root{
-    --bg1:#0f172a; --bg2:#1e293b; --text:#e5e7eb; --muted:#94a3b8; --b:#1f2b46;
-    --lane:#0c1528; --card:#0b1220cc; --accent:#60a5fa; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    --bg1:#0f172a; --bg2:#1e293b; --text:#e5e7eb; --mut:#94a3b8; --b:#1f2b46;
+    --lane:#0c1528; --card:#0b1220cc; --acc:#60a5fa; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0; font-family:system-ui,Segoe UI,Roboto,Inter,sans-serif; color:var(--text);
     background:
-      radial-gradient(900px 600px at 80% 90%, #0a182f 0, transparent 60%),
-      radial-gradient(1200px 800px at 20% 10%, #0b1020 0, transparent 60%),
+      radial-gradient(1100px 700px at 20% 15%, #0b1020 0, transparent 60%),
+      radial-gradient(1000px 650px at 80% 90%, #0a182f 0, transparent 60%),
       linear-gradient(135deg,var(--bg1),var(--bg2));
-    display:flex; align-items:center; justify-content:center; padding:16px;
+    display:flex; align-items:center; justify-content:center; padding:14px;
   }
   .wrap{
-    width:min(1000px,96vw); background:var(--card); border:1px solid var(--b); border-radius:18px;
+    width:min(1100px,97vw); background:var(--card); border:1px solid var(--b); border-radius:18px;
     box-shadow:0 16px 40px rgba(0,0,0,.35); overflow:hidden; position:relative;
     -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   }
@@ -33,85 +33,95 @@
   h1{margin:0;font-size:16px}
   .hud{display:flex; gap:8px; flex-wrap:wrap}
   .tag{border:1px solid #22345f; background:#0e1830; color:#cbd5e1; padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px}
-  .main{display:grid; grid-template-columns:1fr 300px; gap:12px; padding:12px}
+  .main{display:grid; grid-template-columns:1fr 320px; gap:12px; padding:12px}
   @media (max-width:900px){ .main{grid-template-columns:1fr} .side{order:-1} }
   .stage{
     border:1px solid var(--b); border-radius:14px; background:var(--lane); position:relative; overflow:hidden;
     display:flex; align-items:center; justify-content:center; min-height:62vh;
   }
-  canvas{ display:block; width:100%; height:100%; background:
-    linear-gradient(0deg, #0b1426 0, #0c162a 100%);
-    border-radius:14px;
-  }
-  .lanesOverlay{position:absolute; inset:0; pointer-events:none; display:grid; grid-template-columns:repeat(3,1fr); gap:0}
-  .lanesOverlay i{border-left:1px dashed #22345f55; border-right:1px dashed #22345f55}
+  canvas{ display:block; width:100%; height:100%; border-radius:14px; background:linear-gradient(0deg,#0b1426,#0c162a)}
+  .lanesOverlay{position:absolute; inset:0; pointer-events:none}
   .side{
     border:1px solid var(--b); border-radius:14px; background:#0c1528; padding:12px; display:flex; flex-direction:column; gap:10px
   }
-  .controls{
-    display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;
-  }
+  .bar{height:12px; border:1px solid #22345f; border-radius:999px; background:#0d172c; overflow:hidden}
+  .bar i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#60a5fa)}
+  .opt{display:flex; align-items:center; gap:8px; color:var(--mut); font-size:14px}
+  .controls{display:grid; grid-template-columns:1fr 1fr; gap:10px}
   .btn{
     padding:14px 16px; border-radius:14px; border:1px solid #1f2b46; background:#12203b; color:#e2e8f0;
     cursor:pointer; font-weight:900; font-size:18px; user-select:none; text-align:center;
     box-shadow:0 8px 22px rgba(0,0,0,.25); transition:transform .06s ease, box-shadow .2s ease;
   }
   .btn:active{ transform:scale(.98) }
-  .btn.primary{ background:linear-gradient(180deg,#1e3a8a,#1d4ed8) }
   .btn.fire{ grid-column: span 2; font-size:22px; background:linear-gradient(180deg,#0f766e,#10b981) }
-  .opt{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:14px}
-  .bar{height:12px; border:1px solid #22345f; border-radius:999px; background:#0d172c; overflow:hidden}
-  .bar i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#60a5fa)}
+  .btn.bomb{ background:linear-gradient(180deg,#9a6700,#f59e0b) }
+  .tag.small{font-size:12px; padding:4px 8px}
   .overlay{
     position:absolute; inset:0; display:none; align-items:center; justify-content:center; backdrop-filter: blur(6px);
     background:#071024d0; text-align:center; padding:20px; z-index:10;
   }
   .overlay.show{display:flex}
-  .panel{background:#0c1528; border:1px solid #22345f; border-radius:16px; padding:22px; max-width:540px}
+  .panel{background:#0c1528; border:1px solid #22345f; border-radius:16px; padding:22px; max-width:580px}
   .panel h2{margin:0 0 8px}
-  .panel p{margin:6px 0; color:var(--muted)}
-  .panic{
-    position:absolute; bottom:12px; left:12px; right:12px; display:flex; gap:8px; z-index:6;
-  }
-  .panic .btn{flex:1}
+  .panel p{margin:6px 0; color:var(--mut)}
+  .countdown{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:70px; font-weight:900; background:#00000055}
+  .timers{display:grid; grid-template-columns:repeat(3,1fr); gap:6px}
+  .meter{border:1px solid #22345f; border-radius:999px; background:#0e1830; overflow:hidden}
+  .meter i{display:block; height:10px; width:0%; background:linear-gradient(90deg,#60a5fa,#a78bfa)}
 </style>
 </head>
 <body>
-<div class="wrap" role="application" aria-label="Terapia de disparos">
+<div class="wrap" role="application" aria-label="Arcade de disparos terapéutico">
   <header>
-    <div class="title"><div class="logo" aria-hidden="true"></div><h1>Disparos · Entrenamiento (auto)</h1></div>
+    <div class="title"><div class="logo" aria-hidden="true"></div><h1>Galaxy Tap · Arcade (auto)</h1></div>
     <div class="hud">
-      <span class="tag" id="tagScore">Puntos: 0</span>
-      <span class="tag" id="tagHits">Derribos: 0 / 15</span>
-      <span class="tag" id="tagLives">Vidas: 3</span>
+      <span class="tag" id="hScore">Puntos: 0</span>
+      <span class="tag" id="hKills">Derrotas: 0</span>
+      <span class="tag" id="hLives">Vidas: 3</span>
+      <span class="tag" id="hCombo">Combo: x1</span>
     </div>
   </header>
 
   <div class="main">
     <section class="stage" id="stage">
-      <canvas id="game" width="900" height="600" aria-label="Zona de juego"></canvas>
-      <div class="lanesOverlay" aria-hidden="true"><i></i><i></i><i></i></div>
+      <canvas id="game" width="900" height="600"></canvas>
+      <div class="lanesOverlay" id="lanes"></div>
 
-      <!-- Botones de emergencia grandes en móvil -->
-      <div class="panic">
+      <!-- Botones grandes (móvil/tablet) -->
+      <div style="position:absolute; bottom:12px; left:12px; right:12px; display:flex; gap:8px; z-index:6">
         <button class="btn" id="btnLeft">←</button>
         <button class="btn fire" id="btnFire">DISPARAR</button>
         <button class="btn" id="btnRight">→</button>
+        <button class="btn bomb" id="btnBomb">💥 Bomba</button>
       </div>
     </section>
 
     <aside class="side">
       <div>
         <h3 style="margin:0 0 6px">Objetivo</h3>
-        <p style="margin:0; color:var(--muted)">Derriba <b>15 enemigos</b>. Mueve la mira y dispara. También puedes tocar al enemigo directamente.</p>
+        <p style="margin:0; color:var(--mut)">Derriba enemigos, junta <b>power-ups</b> y mantén el <b>combo</b> para multiplicar puntos. Toca los enemigos directamente para acertar (útil en móvil).</p>
       </div>
       <div>
         <h3 style="margin:6px 0">Progreso</h3>
         <div class="bar"><i id="bar"></i></div>
       </div>
       <div>
+        <h3 style="margin:6px 0">Power-ups activos</h3>
+        <div class="timers">
+          <div class="meter"><i id="mShield"></i></div>
+          <div class="meter"><i id="mDouble"></i></div>
+          <div class="meter"><i id="mSlow"></i></div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:6px">
+          <span class="tag small">🛡️ Escudo</span>
+          <span class="tag small">💠 Doble tiro</span>
+          <span class="tag small">🐢 Lento</span>
+        </div>
+      </div>
+      <div>
         <h3 style="margin:6px 0">Opciones</h3>
-        <label class="opt"><input type="checkbox" id="optAim" checked> Imán de mira (autoapunta a la calle con enemigo)</label>
+        <label class="opt"><input type="checkbox" id="optAim" checked> Imán de mira (autoapunta al más cercano)</label>
         <label class="opt"><input type="checkbox" id="optSound" checked> Sonidos</label>
         <label class="opt"><input type="checkbox" id="optVibe" checked> Vibración</label>
       </div>
@@ -119,16 +129,18 @@
         <button class="btn" id="ctlLeft">← Izquierda</button>
         <button class="btn" id="ctlRight">Derecha →</button>
         <button class="btn fire" id="ctlFire">DISPARAR</button>
+        <button class="btn bomb" id="ctlBomb">💥 Bomba</button>
       </div>
+      <p style="color:var(--mut); margin:6px 0 0">Teclado: ← / → / Espacio / Enter / B (bomba)</p>
     </aside>
   </div>
 
   <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
     <div class="panel">
-      <h2 id="ovTitle">¡Entrenamiento completado! 🎯</h2>
-      <p id="ovText">Excelente trabajo. ¿Otra ronda?</p>
+      <h2 id="ovTitle">¡Partida terminada!</h2>
+      <p id="ovText" class="mut">Puntos: 0</p>
       <div style="display:flex; gap:8px; justify-content:center; margin-top:10px">
-        <button class="btn" id="btnAgain">Repetir</button>
+        <button class="btn" id="btnAgain">Jugar de nuevo</button>
       </div>
     </div>
   </div>
@@ -136,19 +148,21 @@
 
 <script>
 (() => {
-  /* ============ Parámetros del nivel ============ */
-  const GOAL_KILLS = 15;
+  /* ======== Config ======== */
+  const LANES = 4;                   // más carriles = más juego
   const START_LIVES = 3;
-  const LANES = 3;
-  const ENEMY_SPAWN_MS = 900;     // cada cuánto aparece
-  const ENEMY_SPEED = 90;         // px/s, baja velocidad para accesibilidad
-  const BULLET_SPEED = 600;       // px/s
-  const ENEMY_SIZE = 64;          // px (grande)
-  const RETICLE_Y = 520;          // y de la mira
-  const FIRE_COOLDOWN = 180;      // ms entre disparos
-  const TAP_KILL_HITBOX = 42;     // radio táctil grande
+  const ENEMY_BASE_SPAWN = 900;      // ms (baja con dificultad)
+  const ENEMY_BASE_SPEED = 120;      // px/s (sube con dificultad)
+  const BULLET_SPEED = 650;          // px/s
+  const FIRE_COOLDOWN = 160;         // ms
+  const TAP_KILL_R = 46;             // radio táctil grande
+  const BOSS_EVERY = 25;             // cada cuántas derrotas aparece un mini-jefe
+  const DROP_CHANCE = 0.18;          // prob. de soltar power-up al morir
 
-  /* ============ Estado ============ */
+  const PU_TIME = { shield: 9000, double: 8000, slow: 6000 }; // ms
+  const SCORE = { enemy: 100, fast: 140, zig: 160, boss: 1200 };
+
+  /* ======== Estado ======== */
   const cvs = document.getElementById('game');
   const ctx = cvs.getContext('2d');
   const stage = document.getElementById('stage');
@@ -156,284 +170,347 @@
   let W = cvs.width, H = cvs.height;
 
   const ui = {
-    tagScore: document.getElementById('tagScore'),
-    tagHits:  document.getElementById('tagHits'),
-    tagLives: document.getElementById('tagLives'),
-    bar:      document.getElementById('bar'),
-    overlay:  document.getElementById('overlay'),
-    btnAgain: document.getElementById('btnAgain'),
-    optAim:   document.getElementById('optAim'),
-    optSound: document.getElementById('optSound'),
-    optVibe:  document.getElementById('optVibe'),
-    buttons: {
-      left: document.getElementById('btnLeft'),
-      right:document.getElementById('btnRight'),
-      fire: document.getElementById('btnFire'),
-      ctlLeft: document.getElementById('ctlLeft'),
-      ctlRight:document.getElementById('ctlRight'),
-      ctlFire: document.getElementById('ctlFire')
+    hScore: document.getElementById('hScore'),
+    hKills: document.getElementById('hKills'),
+    hLives: document.getElementById('hLives'),
+    hCombo: document.getElementById('hCombo'),
+    bar: document.getElementById('bar'),
+    overlay: document.getElementById('overlay'),
+    ovTitle: document.getElementById('ovTitle'),
+    ovText: document.getElementById('ovText'),
+    again: document.getElementById('btnAgain'),
+    meters: { shield: document.getElementById('mShield'), double: document.getElementById('mDouble'), slow: document.getElementById('mSlow') },
+    aim: document.getElementById('optAim'),
+    sound: document.getElementById('optSound'),
+    vibe: document.getElementById('optVibe'),
+    btns: {
+      left: document.getElementById('btnLeft'), right: document.getElementById('btnRight'), fire: document.getElementById('btnFire'), bomb: document.getElementById('btnBomb'),
+      ctlLeft: document.getElementById('ctlLeft'), ctlRight: document.getElementById('ctlRight'), ctlFire: document.getElementById('ctlFire'), ctlBomb: document.getElementById('ctlBomb')
     }
   };
 
   const state = {
-    running: false,
-    lane: 1,               // 0..2
-    lastFire: 0,
-    score: 0,
-    hits: 0,
-    lives: START_LIVES,
-    enemies: [],
-    bullets: [],
-    spawnTimer: 0,
-    aimAssist: true,
-    soundOn: true,
-    vibeOn: true,
-    lastT: 0,
-    raf: null
+    running:false, lane: Math.floor(LANES/2),
+    lives: START_LIVES, score:0, kills:0, combo:0, mult:1,
+    enemies:[], bullets:[], powerups:[], particles:[],
+    lastFire:0, spawnMs:ENEMY_BASE_SPAWN, speedMul:1, difficulty:0,
+    timers: { shield:0, double:0, slow:0 }, bombs:1,
+    lastT:0, raf:0
   };
 
-  /* ============ Utilidades ============ */
-  function laneX(l){ return (W * (1/(LANES*2) + l/LANES)); }
-  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
-  function vibe(ms=40){ if(state.vibeOn && 'vibrate' in navigator) navigator.vibrate(ms); }
-  function beep(freq=520, dur=70, type='square'){
-    if(!state.soundOn) return;
-    const ctxA = beep.ctx || (beep.ctx = new (window.AudioContext||window.webkitAudioContext)());
-    const o = ctxA.createOscillator(); const g = ctxA.createGain();
-    o.type=type; o.frequency.value=freq; g.gain.value=0.04;
-    o.connect(g); g.connect(ctxA.destination); o.start(); setTimeout(()=>o.stop(), dur);
-  }
-  function progressBar(){ ui.bar.style.width = Math.min(100, (state.hits/GOAL_KILLS)*100) + '%'; }
-  function updateHUD(){
-    ui.tagScore.textContent = 'Puntos: ' + state.score;
-    ui.tagHits.textContent  = 'Derribos: ' + state.hits + ' / ' + GOAL_KILLS;
-    ui.tagLives.textContent = 'Vidas: ' + state.lives;
-    progressBar();
-  }
-
-  /* ============ Redimensionado ============ */
+  /* ======== Util ======== */
   function fit(){
-    const rect = stage.getBoundingClientRect();
-    const w = Math.max(600, rect.width - 2);
-    const h = Math.max(380, rect.height - 2);
-    cvs.style.width = w+'px'; cvs.style.height = h+'px';
+    const r = stage.getBoundingClientRect();
+    const w = Math.max(640, r.width - 2), h = Math.max(420, r.height - 2);
+    cvs.style.width=w+'px'; cvs.style.height=h+'px';
     cvs.width = Math.round(w*dpr); cvs.height = Math.round(h*dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    W = w; H = h;
+    ctx.setTransform(dpr,0,0,dpr,0,0); W=w; H=h;
+    drawGrid();
   }
   window.addEventListener('resize', fit, {passive:true}); fit();
 
-  /* ============ Entidades ============ */
-  function spawnEnemy(){
-    const lane = Math.floor(Math.random()*LANES);
-    const x = laneX(lane);
-    state.enemies.push({ lane, x, y: -ENEMY_SIZE, r: ENEMY_SIZE*0.5 });
+  function laneX(l){ return (W*(1/(LANES*2)+ l/LANES)); }
+  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+  function rnd(a,b){ return Math.random()*(b-a)+a; }
+  function vibe(ms=40){ if(ui.vibe.checked && 'vibrate' in navigator) navigator.vibrate(ms); }
+  function beep(freq=520, dur=70, type='square'){
+    if(!ui.sound.checked) return;
+    const c = beep.ctx || (beep.ctx = new (window.AudioContext||window.webkitAudioContext)());
+    const o = c.createOscillator(), g = c.createGain();
+    o.type=type; o.frequency.value=freq; g.gain.value=0.045; o.connect(g); g.connect(c.destination);
+    o.start(); setTimeout(()=>o.stop(), dur);
+  }
+  function progress(){ ui.bar.style.width = Math.min(100, state.kills % BOSS_EVERY / BOSS_EVERY * 100) + '%'; }
+  function updateHUD(){
+    ui.hScore.textContent = 'Puntos: ' + state.score;
+    ui.hKills.textContent = 'Derrotas: ' + state.kills;
+    ui.hLives.textContent = 'Vidas: ' + state.lives + ' · 💣 ' + state.bombs;
+    ui.hCombo.textContent = 'Combo: x' + state.mult;
+    progress();
+  }
+  function addParticles(x,y,color='#8ec5ff', n=10){
+    for(let i=0;i<n;i++) state.particles.push({x,y, vx:rnd(-120,120), vy:rnd(-180,0), r:rnd(2,4), a:1, color});
   }
 
+  /* ======== Entidades ======== */
+  function spawnEnemy(forceBoss=false){
+    const type = forceBoss ? 'boss' : (Math.random()<.15? 'zig' : Math.random()<.35? 'fast':'normal');
+    const lane = Math.floor(Math.random()*LANES);
+    const x = laneX(lane);
+    const r  = type==='boss' ? 46 : 28;
+    const sp = (type==='fast'? 1.35 : 1) * ENEMY_BASE_SPEED * (1 + state.difficulty*0.08);
+    const hp = type==='boss' ? 8 : 1;
+    state.enemies.push({type,lane,x, y:-r*2, r, sp, hp, t:0});
+  }
   function fire(){
     const now = performance.now();
     if(now - state.lastFire < FIRE_COOLDOWN) return;
     state.lastFire = now;
-    // Asistencia: si hay enemigo en otra calle, mueve la mira a su calle
-    if(state.aimAssist){
-      const ahead = state.enemies.filter(e=>e.y<RETICLE_Y).sort((a,b)=>a.y-b.y)[0];
+
+    // Imán de mira
+    if(ui.aim.checked){
+      const ahead = state.enemies.filter(e=>e.y<H).sort((a,b)=>a.y-b.y)[0];
       if(ahead) state.lane = ahead.lane;
     }
-    // Disparo recto en la calle actual
-    const x = laneX(state.lane);
-    state.bullets.push({ x, y: RETICLE_Y, r: 6 });
-    beep(620,60,'square'); vibe(20);
+    const x = laneX(state.lane), y = H-80;
+    if(state.timers.double>0){
+      state.bullets.push({x:x-18,y, r:6}); state.bullets.push({x:x+18,y, r:6});
+      beep(650,60,'square');
+    }else{
+      state.bullets.push({x,y, r:6}); beep(600,60,'square');
+    }
+    vibe(16);
+  }
+  function dropPowerUp(x,y){
+    const r = Math.random();
+    const type = r<.34 ? 'shield' : r<.67 ? 'double' : 'slow';
+    state.powerups.push({type, x, y, r:12, vy:60});
+  }
+  function takePowerUp(p){
+    if(p.type==='shield') { state.timers.shield = PU_TIME.shield; beep(480,120,'sine'); }
+    if(p.type==='double') { state.timers.double = PU_TIME.double; beep(820,90,'triangle'); }
+    if(p.type==='slow')   { state.timers.slow   = PU_TIME.slow;   beep(360,140,'sine'); }
   }
 
-  /* ============ Colisiones ============ */
-  function dist2(ax,ay,bx,by){ const dx=ax-bx, dy=ay-by; return dx*dx+dy*dy; }
-  function hitEnemyAt(x,y, r=TAP_KILL_HITBOX){
-    for(let i=0;i<state.enemies.length;i++){
-      const e = state.enemies[i];
-      if(dist2(x,y,e.x,e.y) <= (e.r+r)*(e.r+r)){
-        // eliminar
+  /* ======== Dibujo de rejilla ======== */
+  function drawGrid(){
+    const lanes = document.getElementById('lanes'); lanes.innerHTML='';
+    const g = document.createElement('canvas'); g.width=W*dpr; g.height=H*dpr; g.style.width=W+'px'; g.style.height=H+'px';
+    const c = g.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+    c.strokeStyle = '#22345f55'; c.setLineDash([8,6]);
+    for(let l=1;l<LANES;l++){ const x=l*W/LANES; c.beginPath(); c.moveTo(x,0); c.lineTo(x,H); c.stroke(); }
+    lanes.appendChild(g);
+  }
+
+  /* ======== Input ======== */
+  function mvLeft(){ state.lane = clamp(state.lane-1,0,LANES-1); vibe(12); }
+  function mvRight(){ state.lane = clamp(state.lane+1,0,LANES-1); vibe(12); }
+  ui.btns.left.onclick = mvLeft; ui.btns.right.onclick = mvRight; ui.btns.fire.onclick = fire;
+  ui.btns.bomb.onclick = bomb; ui.btns.ctlLeft.onclick = mvLeft; ui.btns.ctlRight.onclick = mvRight; ui.btns.ctlFire.onclick = fire; ui.btns.ctlBomb.onclick = bomb;
+
+  window.addEventListener('keydown',(e)=>{
+    if(e.code==='ArrowLeft'||e.code==='KeyA'){e.preventDefault(); mvLeft();}
+    if(e.code==='ArrowRight'||e.code==='KeyD'){e.preventDefault(); mvRight();}
+    if(e.code==='Space'||e.code==='Enter'){e.preventDefault(); fire();}
+    if(e.code==='KeyB'){e.preventDefault(); bomb();}
+  });
+
+  // Tocar directamente un enemigo
+  cvs.addEventListener('click',(e)=>{
+    const r = cvs.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    for(let i=state.enemies.length-1;i>=0;i--){
+      const en = state.enemies[i];
+      const dx=x-en.x, dy=y-en.y;
+      if(dx*dx+dy*dy <= (en.r+TAP_KILL_R)*(en.r+TAP_KILL_R)){
         state.enemies.splice(i,1);
-        onKill(e);
-        return true;
+        onKill(en, true);
+        break;
       }
     }
-    return false;
-  }
-  function onKill(e){
-    state.score += 100;
-    state.hits  += 1;
-    beep(760,90,'triangle'); setTimeout(()=>beep(880,70,'triangle'),60); vibe(40);
+  });
+
+  /* ======== Bomba ======== */
+  function bomb(){
+    if(state.bombs<=0) return;
+    state.bombs--;
+    addParticles(W/2,H/2,'#f8d66d',40);
+    beep(220,100,'sawtooth'); setTimeout(()=>beep(180,200,'sawtooth'),80); vibe(100);
+    const killed = state.enemies.splice(0, state.enemies.length);
+    killed.forEach(e=> onKill(e, false, 0.5));
     updateHUD();
-    if(state.hits >= GOAL_KILLS){
-      endGame(true);
-    }
   }
 
-  /* ============ Bucle ============ */
+  /* ======== Kill / daño ======== */
+  function onKill(e, byTap=false, bonusMul=1){
+    const base = e.type==='boss'? SCORE.boss : e.type==='zig'? SCORE.zig : e.type==='fast'? SCORE.fast : SCORE.enemy;
+    state.combo++; state.mult = 1 + Math.floor(state.combo/6); // x1, x2, x3, x4...
+    const pts = Math.round(base * state.mult * bonusMul);
+    state.score += pts; state.kills++;
+    addParticles(e.x,e.y,'#8ec5ff', e.type==='boss'? 30:14);
+    if(Math.random() < DROP_CHANCE && e.type!=='boss') dropPowerUp(e.x, e.y);
+    if(state.kills % BOSS_EVERY === 0) spawnEnemy(true);
+    updateHUD();
+  }
+  function damage(){
+    if(state.timers.shield>0){ // consume escudo
+      state.timers.shield = 0; addParticles(laneX(state.lane), H-80, '#a7f3d0', 18); beep(320,140,'sine'); return;
+    }
+    state.lives--; state.combo=0; state.mult=1;
+    beep(220,160,'sawtooth'); vibe(90);
+    if(state.lives<=0){ end(false); }
+    updateHUD();
+  }
+
+  /* ======== Game loop ======== */
   function step(t){
     if(!state.running) return;
-    const dt = (state.lastT? (t-state.lastT):16)/1000; state.lastT = t;
+    const rawDt = (state.lastT? (t-state.lastT):16)/1000; state.lastT = t;
+    const slowMul = state.timers.slow>0 ? 0.45 : 1;
+    const dt = rawDt * slowMul;
 
-    // Spawns
-    state.spawnTimer += dt*1000;
-    if(state.spawnTimer >= ENEMY_SPAWN_MS){
-      state.spawnTimer = 0; spawnEnemy();
+    // timers
+    for(const k of ['shield','double','slow']){ if(state.timers[k]>0){ state.timers[k]-=rawDt*1000; if(state.timers[k]<0) state.timers[k]=0; const total=PU_TIME[k]; const pct = total? (state.timers[k]/total)*100 : 0; ui.meters[k].style.width = pct + '%'; } }
+
+    // spawn
+    state.spawnMs -= dt*10; // sube dificultad lentamente
+    state.difficulty += dt*0.02;
+    state.speedMul = 1 + state.difficulty*0.05;
+
+    if(!step._spawnTimer) step._spawnTimer = 0;
+    step._spawnTimer += dt*1000;
+    const spawnEvery = Math.max(380, ENEMY_BASE_SPAWN - state.difficulty*120);
+    if(step._spawnTimer >= spawnEvery){
+      step._spawnTimer = 0;
+      spawnEnemy();
     }
 
-    // Mover enemigos
-    for(const e of state.enemies){ e.y += ENEMY_SPEED*dt; }
+    // mover enemigos
+    for(const e of state.enemies){
+      e.t += dt;
+      let vy = e.sp * state.speedMul;
+      let vx = 0;
+      if(e.type==='zig'){ vx = Math.sin(e.t*3) * 60; }
+      e.y += vy*dt; e.x += vx*dt;
+    }
 
-    // Mover balas
+    // mover balas
     for(const b of state.bullets){ b.y -= BULLET_SPEED*dt; }
 
-    // Colisión bala-enemigo
+    // mover powerups
+    for(const p of state.powerups){ p.y += 70*dt; }
+
+    // colisiones bala-enemigo
     outer: for(let i=state.bullets.length-1;i>=0;i--){
       const b = state.bullets[i];
       for(let j=state.enemies.length-1;j>=0;j--){
         const e = state.enemies[j];
-        if(dist2(b.x,b.y, e.x,e.y) <= (e.r+b.r)*(e.r+b.r)){
+        const dx=b.x-e.x, dy=b.y-e.y, rr=(e.r+b.r)*(e.r+b.r);
+        if(dx*dx+dy*dy <= rr){
           state.bullets.splice(i,1);
-          state.enemies.splice(j,1);
-          onKill(e);
+          e.hp--; if(e.hp<=0){ state.enemies.splice(j,1); onKill(e); }
+          addParticles(e.x,e.y,'#a5b4fc',6);
           continue outer;
         }
       }
     }
 
-    // Enemigos que llegan abajo
+    // jugador recoge powerup
+    for(let i=state.powerups.length-1;i>=0;i--){
+      const p=state.powerups[i];
+      const dx = laneX(state.lane)-p.x, dy = (H-80)-p.y;
+      if(dx*dx+dy*dy <= (22+p.r)*(22+p.r)){ state.powerups.splice(i,1); takePowerUp(p); }
+    }
+
+    // enemigos que llegan abajo
     for(let i=state.enemies.length-1;i>=0;i--){
-      const e = state.enemies[i];
-      if(e.y - e.r > H){
-        state.enemies.splice(i,1);
-        state.lives -= 1;
-        beep(200,120,'sawtooth'); vibe(80);
-        updateHUD();
-        if(state.lives <= 0){ endGame(false); }
+      if(state.enemies[i].y - state.enemies[i].r > H){
+        const e = state.enemies.splice(i,1)[0];
+        damage();
       }
     }
 
-    // Limpiar balas fuera
+    // limpiar
     state.bullets = state.bullets.filter(b=> b.y + b.r > 0);
+    state.powerups = state.powerups.filter(p=> p.y - p.r < H);
+    // partículas
+    for(let i=state.particles.length-1;i>=0;i--){
+      const p=state.particles[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=120*dt; p.a-=dt*1.2; if(p.a<=0) state.particles.splice(i,1);
+    }
 
-    // Dibujo
+    // combo decae si pasa mucho sin golpear
+    if(!step._sinceHit) step._sinceHit = 0;
+    step._sinceHit += dt;
+    if(step._sinceHit > 4 && state.combo>0){ state.combo=0; state.mult=1; ui.hCombo.textContent='Combo: x1'; }
+
     draw();
-
-    // Siguiente frame
     state.raf = requestAnimationFrame(step);
   }
 
-  /* ============ Dibujo ============ */
+  /* ======== Dibujo ======== */
   function draw(){
     ctx.clearRect(0,0,W,H);
-
-    // Fondo suave
-    const grd = ctx.createLinearGradient(0,0,0,H);
-    grd.addColorStop(0,'#0b1426'); grd.addColorStop(1,'#0c162a');
+    // back stars
+    const grd = ctx.createLinearGradient(0,0,0,H); grd.addColorStop(0,'#0b1426'); grd.addColorStop(1,'#0c162a');
     ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
+    for(let i=0;i<30;i++){ ctx.fillStyle='rgba(255,255,255,0.04)'; ctx.fillRect((i*73)%W, (i*113)%H, 2, 2); }
 
-    // Calles
-    for(let l=1;l<LANES;l++){
-      const x = l*W/LANES;
-      ctx.strokeStyle = '#22345f55'; ctx.setLineDash([8,6]);
-      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); ctx.setLineDash([]);
-    }
-
-    // Enemigos (discos grandes brillantes)
+    // enemies
     for(const e of state.enemies){
       ctx.save();
-      const glow = ctx.createRadialGradient(e.x, e.y, e.r*0.2, e.x, e.y, e.r);
-      glow.addColorStop(0,'#60a5fa'); glow.addColorStop(1,'#1b3b77');
-      ctx.fillStyle = glow;
-      ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,Math.PI*2); ctx.fill();
-      ctx.strokeStyle = '#8ec5ff'; ctx.lineWidth = 2; ctx.stroke();
+      const glow = ctx.createRadialGradient(e.x,e.y,e.r*0.2, e.x,e.y,e.r);
+      if(e.type==='boss'){ glow.addColorStop(0,'#fda4af'); glow.addColorStop(1,'#7f1d1d'); }
+      else { glow.addColorStop(0,'#60a5fa'); glow.addColorStop(1,'#1b3b77'); }
+      ctx.fillStyle=glow; ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,Math.PI*2); ctx.fill();
+      ctx.lineWidth = e.type==='boss'? 3:2; ctx.strokeStyle = e.type==='boss'? '#fecaca' : '#8ec5ff'; ctx.stroke();
+      if(e.type==='boss'){ ctx.fillStyle='#fff'; ctx.font='bold 12px system-ui'; ctx.textAlign='center'; ctx.fillText('HP '+e.hp, e.x, e.y+4); }
       ctx.restore();
     }
 
-    // Balas
+    // powerups
+    for(const p of state.powerups){
+      ctx.save(); ctx.translate(p.x,p.y);
+      ctx.fillStyle = p.type==='shield'? '#93c5fd' : p.type==='double'? '#a78bfa' : '#fcd34d';
+      ctx.beginPath(); ctx.arc(0,0,p.r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#e2e8f0'; ctx.stroke();
+      ctx.fillStyle='#0b1220'; ctx.font='bold 14px system-ui'; ctx.textAlign='center';
+      ctx.fillText(p.type==='shield'?'🛡️':p.type==='double'?'💠':'🐢', 0, 5);
+      ctx.restore();
+    }
+
+    // bullets
     ctx.fillStyle = '#a7f3d0';
     for(const b of state.bullets){
       ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
       ctx.fillRect(b.x-2, b.y, 4, 12);
     }
 
-    // Mira
-    const rx = laneX(state.lane), ry = RETICLE_Y;
-    ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(rx,ry,20,0,Math.PI*2); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(rx-26,ry); ctx.lineTo(rx+26,ry);
-    ctx.moveTo(rx,ry-26); ctx.lineTo(rx,ry+26); ctx.stroke();
-  }
+    // player reticle
+    const rx = laneX(state.lane), ry = H-80;
+    ctx.save();
+    ctx.strokeStyle = state.timers.shield>0? '#a7f3d0' : '#e5e7eb';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(rx,ry,22,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(rx-26,ry); ctx.lineTo(rx+26,ry); ctx.moveTo(rx,ry-26); ctx.lineTo(rx,ry+26); ctx.stroke();
+    ctx.restore();
 
-  /* ============ Control ============ */
-  function moveLeft(){ state.lane = clamp(state.lane-1, 0, LANES-1); vibe(15); }
-  function moveRight(){ state.lane = clamp(state.lane+1, 0, LANES-1); vibe(15); }
-
-  // Controles táctiles / botones grandes
-  ui.buttons.left.addEventListener('click', moveLeft);
-  ui.buttons.right.addEventListener('click', moveRight);
-  ui.buttons.fire.addEventListener('click', fire);
-
-  ui.buttons.ctlLeft.addEventListener('click', moveLeft);
-  ui.buttons.ctlRight.addEventListener('click', moveRight);
-  ui.buttons.ctlFire.addEventListener('click', fire);
-
-  // Teclado
-  window.addEventListener('keydown', (e)=>{
-    if(e.code==='ArrowLeft' || e.code==='KeyA'){ e.preventDefault(); moveLeft(); }
-    if(e.code==='ArrowRight'|| e.code==='KeyD'){ e.preventDefault(); moveRight(); }
-    if(e.code==='Space' || e.code==='Enter'){ e.preventDefault(); fire(); }
-  });
-
-  // Tocar directamente un enemigo para derribarlo
-  cvs.addEventListener('click', (e)=>{
-    const rect = cvs.getBoundingClientRect();
-    const x = (e.clientX - rect.left), y = (e.clientY - rect.top);
-    if(hitEnemyAt(x, y)){ /* ya suma dentro de onKill */ }
-  });
-
-  // Opciones
-  ui.optAim.addEventListener('change', ()=> state.aimAssist = ui.optAim.checked);
-  ui.optSound.addEventListener('change', ()=> state.soundOn = ui.optSound.checked);
-  ui.optVibe.addEventListener('change', ()=> state.vibeOn  = ui.optVibe.checked);
-
-  // Repetir
-  ui.btnAgain.addEventListener('click', ()=> start());
-
-  /* ============ Inicio / Fin ============ */
-  function start(){
-    // Reset
-    cancelAnimationFrame(state.raf||0);
-    state.running = true;
-    state.lane = 1;
-    state.lastFire = 0;
-    state.score = 0; state.hits = 0; state.lives = START_LIVES;
-    state.enemies.length = 0; state.bullets.length = 0;
-    state.spawnTimer = 400; // que aparezca pronto
-    state.lastT = 0;
-    ui.overlay.classList.remove('show');
-    updateHUD();
-    step(performance.now());
-  }
-
-  function endGame(win){
-    state.running = false;
-    cancelAnimationFrame(state.raf||0);
-    const ovText = document.getElementById('ovText');
-    const title  = document.getElementById('ovTitle');
-    if(win){
-      title.textContent = '¡Entrenamiento completado! 🎯';
-      ovText.textContent = `Puntos: ${state.score} · Derribos: ${state.hits}/${GOAL_KILLS}`;
-      beep(800,120,'triangle'); setTimeout(()=>beep(920,100,'triangle'),100);
-    }else{
-      title.textContent = 'Se acabaron las vidas 😵';
-      ovText.textContent = `Puntos: ${state.score} · Derribos: ${state.hits}/${GOAL_KILLS}. ¡Inténtalo de nuevo!`;
-      beep(200,220,'sawtooth');
+    // particles
+    for(const p of state.particles){
+      ctx.globalAlpha = Math.max(0, p.a);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 1;
     }
-    ui.overlay.classList.add('show');
   }
 
-  // Auto-inicio
-  window.addEventListener('load', ()=> setTimeout(start, 300));
+  /* ======== Fin / Start ======== */
+  function end(win){
+    state.running=false; cancelAnimationFrame(state.raf||0);
+    ui.ovTitle.textContent = win ? '¡Victoria! 🚀' : '¡Partida terminada!';
+    ui.ovText.textContent = `Puntos: ${state.score} · Derrotas: ${state.kills} · Combo máx: x${state.mult}`;
+    ui.overlay.classList.add('show');
+    beep(win? 880:220, 200, win?'triangle':'sawtooth');
+  }
+  function reset(){
+    state.running=true; state.lane=Math.floor(LANES/2);
+    state.lives=START_LIVES; state.score=0; state.kills=0; state.combo=0; state.mult=1;
+    state.enemies.length=0; state.bullets.length=0; state.powerups.length=0; state.particles.length=0;
+    state.lastFire=0; state.spawnMs=ENEMY_BASE_SPAWN; state.speedMul=1; state.difficulty=0;
+    state.timers.shield=0; state.timers.double=0; state.timers.slow=0; state.bombs=1;
+    state.lastT=0; updateHUD(); progress(); draw();
+  }
+  function start(){
+    reset();
+    // cuenta atrás
+    const cd = document.createElement('div'); cd.className='countdown'; cd.textContent='3'; stage.appendChild(cd);
+    let n=3; const timer=setInterval(()=>{ n--; cd.textContent = n>0? n : '¡Ya!'; if(n<=0){ clearInterval(timer); setTimeout(()=>{ stage.removeChild(cd); run(); }, 300); } }, 700);
+  }
+  function run(){ state.raf = requestAnimationFrame(step); }
+
+  ui.again.onclick = ()=>{ ui.overlay.classList.remove('show'); start(); };
+
+  // Autoinicio
+  window.addEventListener('load', ()=> setTimeout(start, 350));
 })();
 </script>
 </body>
