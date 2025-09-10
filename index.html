@@ -3,15 +3,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>TheraTaps · Terapia de dedos</title>
-
-<!-- PWA -->
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0f172a"/>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cdefs/%3E%3Crect width='256' height='256' rx='56' fill='%231e293b'/%3E%3Ccircle cx='128' cy='128' r='70' fill='%2360a5fa'/%3E%3Ctext x='128' y='146' font-family='Arial' font-size='86' text-anchor='middle' fill='white'%3ET%3C/text%3E%3C/svg%3E">
-
+<title>Terapia · Nivel 1 (Auto)</title>
 <style>
-  :root{ --bg1:#0f172a; --bg2:#1e293b; --text:#e5e7eb; --muted:#94a3b8; --radius:18px; }
+  :root{
+    --bg1:#0f172a; --bg2:#1e293b; --text:#e5e7eb; --muted:#94a3b8;
+    --card:#0b1220cc; --b:#1a2650; --acc:#60a5fa; --ok:#22c55e;
+  }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
@@ -19,427 +16,199 @@
     background: radial-gradient(1200px 800px at 20% 10%, #0b1020 0, transparent 60%),
                 radial-gradient(900px 600px at 80% 90%, #0a182f 0, transparent 60%),
                 linear-gradient(135deg,var(--bg1),var(--bg2));
-    overflow:hidden;
+    display:flex; align-items:center; justify-content:center; padding:18px;
   }
-  .wrap{display:flex; align-items:center; justify-content:center; height:100%; padding:20px}
   .card{
-    width:min(980px,96vw); min-height:70vh;
-    background:linear-gradient(180deg,#0b1220aa,#0b1220cc);
-    border:1px solid #172036; border-radius:var(--radius);
-    box-shadow:0 10px 30px rgba(0,0,0,.35);
-    position:relative; overflow:hidden;
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    width:min(960px,96vw); background:var(--card); border:1px solid var(--b); border-radius:18px;
+    box-shadow:0 12px 40px rgba(0,0,0,.35); overflow:hidden;
   }
   header{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:14px 16px; border-bottom:1px solid #172036; background:#0b1220aa;
-    position:sticky; top:0; z-index:5;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 16px; border-bottom:1px solid var(--b); background:#0e1930aa;
   }
-  .logo{width:36px; height:36px; border-radius:12px; background:conic-gradient(from 0deg,#60a5fa,#34d399,#60a5fa)}
-  .title h1{font-size:18px; margin:0}
-  .hud{display:flex; align-items:center; gap:10px; font-size:14px; color:var(--muted)}
-  .tag{border:1px solid #233255; padding:6px 10px; border-radius:999px; color:#cbd5e1; background:#0e1830; font-weight:600}
-  .btn{
-    padding:12px 16px; border-radius:14px; border:1px solid #1f2b46; background:#12203b; color:#e2e8f0;
-    cursor:pointer; font-weight:700; transition:transform .08s ease, box-shadow .2s ease, background .2s ease; user-select:none;
-  }
-  .btn.primary{background:linear-gradient(180deg,#1e3a8a,#1d4ed8); border-color:#1d4ed8}
-  .btn.success{background:linear-gradient(180deg,#0f766e,#10b981); border-color:#10b981}
-  .btn:active{transform:scale(.98)}
-  .bar{position:relative; width:100%; height:12px; border-radius:999px; background:#0d172c; border:1px solid #1a2847; overflow:hidden}
-  .bar > i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#60a5fa); transition:width .12s linear}
-  main{padding:16px; display:grid; grid-template-columns: 1fr 320px; gap:16px}
+  .title{display:flex; align-items:center; gap:10px}
+  .logo{width:32px; height:32px; border-radius:12px; background:conic-gradient(from 0deg,#60a5fa,#22c55e,#60a5fa)}
+  h1{font-size:16px; margin:0; letter-spacing:.3px}
+  .hud{display:flex; gap:8px; flex-wrap:wrap}
+  .tag{border:1px solid #22345f; background:#0e1830; color:#cbd5e1; padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px}
+  main{display:grid; grid-template-columns:1fr 300px; gap:16px; padding:16px}
   @media (max-width:900px){ main{grid-template-columns:1fr} .side{order:-1} }
   .stage{
-    position:relative; min-height:56vh; border-radius:14px; border:1px dashed #1f2b46; background:#0c1528;
-    display:flex; align-items:center; justify-content:center; overflow:hidden; text-align:center; padding:14px;
+    min-height:56vh; border:1px dashed #23345d; border-radius:14px; background:#0c1528;
+    display:flex; align-items:center; justify-content:center; padding:16px; text-align:center; position:relative; overflow:hidden;
   }
-  .side{background:#0c1528; border:1px solid #1f2b46; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:12px}
   .big{
-    width:min(260px,60vw); height:min(260px,60vw); border-radius:999px; display:flex; align-items:center; justify-content:center;
+    width:min(300px,70vw); height:min(300px,70vw); border-radius:999px; border:2px solid #22408c;
     background:radial-gradient(circle at 30% 30%, #60a5fa33 0 40%, transparent 41%), linear-gradient(180deg,#1d4ed8,#0b74dd);
-    box-shadow:0 10px 30px #1d4ed866, inset 0 0 30px #ffffff22; border:2px solid #22408c; color:#fff; font-size:22px; font-weight:900;
-    cursor:pointer; user-select:none; transition:transform .08s ease;
+    box-shadow:0 14px 34px #0b5bd744, inset 0 0 30px #ffffff22;
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:26px; font-weight:900; user-select:none; cursor:pointer;
+    transition:transform .08s ease, filter .12s linear;
   }
-  .big:active{transform:scale(.98)}
-  .moving{position:absolute}
-  .padWrap{display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%}
-  .pad{height:220px; border-radius:18px; border:2px solid #243b70; background:linear-gradient(180deg,#0e1a34,#13264a);
-       display:flex; align-items:center; justify-content:center; font-weight:900; font-size:22px; cursor:pointer; user-select:none}
-  .pad.active{outline:3px solid #60a5fa}
-  .hint{font-size:14px; color:var(--muted)}
-  .list{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px}
-  .lvl{padding:10px; border:1px solid #263a6a; border-radius:12px; background:#0e1830; display:flex; flex-direction:column; gap:6px}
-  .lvl.locked{opacity:.55; filter:saturate(.4)}
-  .lvl h4{margin:0; font-size:14px}
-  .lvl .small{font-size:12px; color:#9fb2d0}
-  .overlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; backdrop-filter: blur(6px);
-           background:#051024cc; z-index:10; text-align:center; padding:20px}
+  .big:active{ transform: scale(.98); }
+  .side{border:1px solid #23345d; border-radius:14px; background:#0c1528; padding:14px; display:flex; flex-direction:column; gap:12px}
+  .bar{height:12px; border:1px solid #23345d; border-radius:999px; background:#0d172c; overflow:hidden}
+  .bar i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#60a5fa)}
+  .muted{color:var(--muted); font-size:14px}
+  .overlay{
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center; backdrop-filter: blur(6px);
+    background:#071024cc; padding:20px; text-align:center;
+  }
   .overlay.show{display:flex}
-  .overlay .panel{background:#0c1528; border:1px solid #1f2b46; border-radius:16px; padding:22px; max-width:520px}
-  .sr{position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden}
+  .panel{background:#0c1528; border:1px solid #23345d; border-radius:16px; padding:22px; max-width:520px}
+  .btn{padding:12px 16px; border-radius:14px; border:1px solid #1f2b46; background:#12203b; color:#e2e8f0; cursor:pointer; font-weight:700}
+  .btn.success{background:linear-gradient(180deg,#0f766e,#10b981); border-color:#10b981}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card" role="application" aria-label="TheraTaps juego terapéutico">
+  <div class="card" role="application" aria-label="Terapia dedos · Nivel 1">
     <header>
       <div class="title">
         <div class="logo" aria-hidden="true"></div>
-        <h1>TheraTaps · Terapia de dedos</h1>
+        <h1>Nivel 1 · Toques grandes (auto)</h1>
       </div>
       <div class="hud">
-        <span class="tag" id="hudLevel">Nivel 1</span>
-        <span class="tag" id="hudGoal">Meta: —</span>
+        <span class="tag" id="hudGoal">Meta: 6 toques</span>
         <span class="tag" id="hudCount">Progreso: 0</span>
-      </div>
-      <div style="display:flex; gap:8px">
-        <button class="btn" id="btnMenu" aria-label="Volver al menú">Menú</button>
-        <button class="btn primary" id="btnStart" aria-label="Iniciar nivel">Iniciar</button>
-        <button class="btn success" id="btnInstall" style="display:none">Instalar app</button>
+        <span class="tag" id="hudState">Estado: Preparando…</span>
       </div>
     </header>
 
     <main>
       <section class="stage" id="stage" aria-live="polite" aria-atomic="true">
-        <span class="hint" id="status">Pulsa “Iniciar” para comenzar. Usa mouse/touch o Espacio/Enter.</span>
+        <!-- El botón aparece aquí automáticamente -->
       </section>
 
       <aside class="side">
-        <h3 style="margin:2px 0 6px">Niveles</h3>
-        <div class="list" id="levelList"></div>
-
-        <h3 style="margin:12px 0 6px">Sesión</h3>
-        <label><input type="checkbox" id="optSound" checked> Sonidos</label>
-        <label><input type="checkbox" id="optVibe" checked> Vibración</label>
-        <label><input type="checkbox" id="optLeft"> Zurdo (invierte pads)</label>
-        <label><input type="checkbox" id="optAuto"> Auto-iniciar nivel al abrir</label>
-
-        <h3 style="margin:12px 0 6px">Progreso</h3>
-        <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+        <div>
+          <h3 style="margin:0 0 6px">Instrucciones</h3>
+          <p class="muted">Toca el botón grande hasta llegar a 6. También sirven <b>Espacio</b> o <b>Enter</b>.</p>
+        </div>
+        <div>
+          <h3 style="margin:0 0 6px">Progreso</h3>
+          <div class="bar"><i id="bar"></i></div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 6px">Opciones</h3>
+          <label class="muted" style="display:flex; gap:8px; align-items:center">
+            <input type="checkbox" id="optSound" checked> Sonidos
+          </label>
+          <label class="muted" style="display:flex; gap:8px; align-items:center">
+            <input type="checkbox" id="optVibe" checked> Vibración
+          </label>
+          <button class="btn" id="btnReiniciar" style="margin-top:6px">Reiniciar nivel</button>
+        </div>
       </aside>
     </main>
 
     <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
       <div class="panel">
         <h2 id="ovTitle">¡Nivel completado! 🎉</h2>
-        <p id="ovText" class="hint">Excelente trabajo. Vamos al siguiente.</p>
-        <div style="display:flex; gap:8px; justify-content:center; margin-top:10px">
-          <button class="btn" id="btnReplay">Repetir</button>
-          <button class="btn success" id="btnNext">Siguiente nivel</button>
+        <p class="muted">Excelente trabajo. Puedes repetirlo para practicar.</p>
+        <div style="display:flex; justify-content:center; gap:8px; margin-top:10px">
+          <button class="btn success" id="btnRepetir">Repetir</button>
         </div>
       </div>
     </div>
 
-    <span id="ariaLive" class="sr" aria-live="assertive"></span>
+    <span id="ariaLive" style="position:absolute; left:-9999px" aria-live="assertive"></span>
   </div>
-</div>
 
 <script>
-/* ======= Niveles ======= */
-const LEVELS = [
-  { id:1,  type:'tap',   name:'Toques grandes',     goal:6,  size:230, move:false, speed:0,   info:'Toca el botón grande 6 veces.' },
-  { id:2,  type:'tap',   name:'Burbuja lenta',      goal:8,  size:210, move:true,  speed:0.7, info:'Persigue y toca la burbuja 8 veces.' },
-  { id:3,  type:'tap',   name:'Burbuja media',      goal:10, size:180, move:true,  speed:1.1, info:'La burbuja se mueve más. 10 toques.' },
-  { id:4,  type:'hold',  name:'Sostén 2s x3',       goal:3,  size:220, move:false, speed:0,   holdSec:2.0, info:'Mantén presionado 2s, repite 3 veces.' },
-  { id:5,  type:'hold',  name:'Sostén móvil 2.5s',  goal:3,  size:210, move:true,  speed:0.8, holdSec:2.5, info:'Sigue y mantén 2.5s.' },
-  { id:6,  type:'alt',   name:'Alterna 10',         goal:10, padHeight:220, info:'Alterna izquierda/derecha 10 veces. ← → sirven.' },
-  { id:7,  type:'alt',   name:'Alterna 16 (rápido)',goal:16, padHeight:220, fast:true, info:'Ritmo un poco más rápido.' },
-  { id:8,  type:'tap',   name:'Precisión',          goal:9,  size:140, move:true,  speed:1.3, info:'Objetivo más pequeño. 9 toques.' },
-  { id:9,  type:'track', name:'Sigue el círculo',   goal:3.5,size:190, move:true,  speed:0.9, info:'Mantén el puntero/dedo dentro 3.5s.' },
-  { id:10, type:'tap',   name:'Ritmo rápido',       goal:18, size:170, move:false, speed:0,   info:'18 toques lo más constante posible.' },
-];
+(function(){
+  // Configuración nivel 1
+  const GOAL = 6;
+  const state = { inPlay:false, count:0, soundOn:true, vibeOn:true };
 
-const state = {
-  levelIndex: 0, inPlay:false, count:0, trackTimer:0,
-  size:220, move:false, speed:0, goal:0, lefty:false,
-  soundOn:true, vibeOn:true, lastStamp:0, auto:false
-};
-const els = {
-  stage:   document.getElementById('stage'),
-  list:    document.getElementById('levelList'),
-  btnStart:document.getElementById('btnStart'),
-  btnMenu: document.getElementById('btnMenu'),
-  hudL:    document.getElementById('hudLevel'),
-  hudG:    document.getElementById('hudGoal'),
-  hudC:    document.getElementById('hudCount'),
-  bar:     document.getElementById('bar'),
-  ov:      document.getElementById('overlay'),
-  ovText:  document.getElementById('ovText'),
-  btnNext: document.getElementById('btnNext'),
-  btnReplay:document.getElementById('btnReplay'),
-  aria:    document.getElementById('ariaLive'),
-  optSound:document.getElementById('optSound'),
-  optVibe: document.getElementById('optVibe'),
-  optLeft: document.getElementById('optLeft'),
-  optAuto: document.getElementById('optAuto'),
-  status:  document.getElementById('status'),
-  btnInstall: document.getElementById('btnInstall')
-};
-const storage = {
-  get progress(){ return +localStorage.getItem('tt_level') || 1; },
-  set progress(n){ localStorage.setItem('tt_level', String(n)); },
-  get autostart(){ return localStorage.getItem('tt_autostart') === '1'; },
-  set autostart(v){ localStorage.setItem('tt_autostart', v?'1':'0'); }
-};
+  // Elementos
+  const stage = document.getElementById('stage');
+  const hudCount = document.getElementById('hudCount');
+  const hudState = document.getElementById('hudState');
+  const bar = document.getElementById('bar');
+  const ov = document.getElementById('overlay');
+  const btnRepetir = document.getElementById('btnRepetir');
+  const btnReiniciar = document.getElementById('btnReiniciar');
+  const optSound = document.getElementById('optSound');
+  const optVibe = document.getElementById('optVibe');
 
-/* ======= Utils ======= */
-function speak(t){ els.aria.textContent=t; }
-function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
-function rnd(a,b){ return Math.random()*(b-a)+a; }
-function vibe(ms=40){ if(state.vibeOn && 'vibrate' in navigator) navigator.vibrate(ms); }
-function beep(freq=440,dur=90,type='sine'){ if(!state.soundOn) return;
-  const ctx = beep.ctx || (beep.ctx=new (window.AudioContext||window.webkitAudioContext)());
-  const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.value=freq; g.gain.value=0.04;
-  o.connect(g); g.connect(ctx.destination); o.start(); setTimeout(()=>o.stop(),dur);
-}
-function setHUD(lvl){
-  els.hudL.textContent = `Nivel ${lvl.id}`;
-  const goalTxt = lvl.type==='hold' ? `Meta: ${lvl.goal}× sostener ${lvl.holdSec}s`
-                 : lvl.type==='track' ? `Meta: ${lvl.goal.toFixed(1)}s dentro`
-                 : lvl.type==='alt' ? `Meta: alternar ${lvl.goal}`
-                 : `Meta: ${lvl.goal} toques`;
-  els.hudG.textContent = goalTxt;
-  els.hudC.textContent = `Progreso: 0`;
-  progressBar(0, lvl.type==='track'?lvl.goal:lvl.goal);
-}
-function progressBar(cur,total){
-  const pct = total? clamp((cur/total)*100,0,100) : 0;
-  els.bar.style.width = pct + '%';
-}
-function clearStage(){ if(els.stage._cleanup) try{ els.stage._cleanup(); }catch(e){}; els.stage._cleanup=null; els.stage.innerHTML=''; }
+  // Utilidades
+  function progress(){
+    const pct = Math.min(100, (state.count/GOAL)*100);
+    bar.style.width = pct + '%';
+    hudCount.textContent = 'Progreso: ' + state.count + ' / ' + GOAL;
+  }
+  function vibe(ms=40){ if(state.vibeOn && 'vibrate' in navigator) navigator.vibrate(ms); }
+  function beep(freq=520, dur=70, type='square'){
+    if(!state.soundOn) return;
+    const ctx = beep.ctx || (beep.ctx = new (window.AudioContext||window.webkitAudioContext)());
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.type = type; o.frequency.value = freq; g.gain.value = 0.04;
+    o.connect(g); g.connect(ctx.destination); o.start(); setTimeout(()=>o.stop(), dur);
+  }
+  function clearStage(){ stage.innerHTML=''; }
 
-/* ======= Menú/Niveles ======= */
-function buildLevelList(){
-  els.list.innerHTML='';
-  const unlocked = storage.progress;
-  LEVELS.forEach((lvl,i)=>{
-    const d = document.createElement('div');
-    d.className = 'lvl'+((lvl.id>unlocked)?' locked':'');
-    d.innerHTML = `<h4>${lvl.id}. ${lvl.name}</h4>
-      <div class="small">${lvl.info}</div>
-      <button class="btn" ${lvl.id>unlocked?'disabled':''}>Jugar</button>`;
-    d.querySelector('button').onclick = ()=>selectLevel(i);
-    els.list.appendChild(d);
+  // Nivel 1: TAP grande fijo
+  function startLevel(){
+    clearStage();
+    state.inPlay = true;
+    state.count = 0;
+    progress();
+    hudState.textContent = '¡En juego! Toca el botón.';
+
+    const btn = document.createElement('button');
+    btn.className = 'big';
+    btn.innerHTML = 'TOCAR';
+    btn.setAttribute('aria-label','Botón grande para tocar');
+    stage.appendChild(btn);
+
+    function tapped(){
+      if(!state.inPlay) return;
+      state.count++;
+      progress();
+      vibe(30); beep(520,60,'square');
+      // brillo sutil de feedback
+      btn.style.filter = 'brightness(1.06)';
+      setTimeout(()=> btn.style.filter='brightness(1)', 80);
+      if(state.count >= GOAL){
+        state.inPlay = false;
+        vibe(70); beep(660,120,'triangle'); setTimeout(()=>beep(880,120,'triangle'),120);
+        hudState.textContent = 'Completado';
+        ov.classList.add('show');
+      }
+    }
+
+    // Click/touch
+    btn.addEventListener('click', tapped);
+
+    // Teclado: Espacio / Enter
+    const k = (ev)=>{
+      if(ev.code==='Space' || ev.code==='Enter'){
+        ev.preventDefault(); tapped();
+      }
+    };
+    window.addEventListener('keydown', k);
+    // Limpieza cuando se repita el nivel
+    btn._cleanup = ()=> window.removeEventListener('keydown', k);
+    stage._cleanup = btn._cleanup;
+  }
+
+  function resetLevel(){
+    if(stage._cleanup) try{ stage._cleanup(); }catch(e){}
+    ov.classList.remove('show');
+    startLevel();
+  }
+
+  // Eventos UI
+  btnRepetir.addEventListener('click', resetLevel);
+  btnReiniciar.addEventListener('click', resetLevel);
+  optSound.addEventListener('change', ()=> state.soundOn = optSound.checked);
+  optVibe.addEventListener('change',  ()=> state.vibeOn  = optVibe.checked);
+
+  // Auto-inicio al cargar (sin tocar nada)
+  window.addEventListener('load', ()=> {
+    // pequeño delay para asegurar layout
+    setTimeout(startLevel, 300);
   });
-}
-function selectLevel(i){
-  state.levelIndex = i; state.inPlay=false; state.count=0; state.trackTimer=0;
-  const lvl = LEVELS[i];
-  state.size=lvl.size||220; state.move=!!lvl.move; state.speed=lvl.speed||0; state.goal=lvl.goal;
-  setHUD(lvl);
-  clearStage();
-  els.stage.innerHTML = `<span class="hint">Listo: <b>${lvl.name}</b>. Pulsa <b>Iniciar</b>.</span>`;
-}
-
-/* ======= Modos ======= */
-function playTap(){
-  clearStage();
-  const lvl = LEVELS[state.levelIndex];
-  const btn = document.createElement('button');
-  btn.className='big'+(lvl.move?' moving':'');
-  btn.style.width = btn.style.height = state.size+'px';
-  btn.innerHTML='TOCAR';
-  els.stage.appendChild(btn);
-
-  if(lvl.move){
-    let pos={x:els.stage.clientWidth/2,y:els.stage.clientHeight/2};
-    let vel={x:rnd(-1,1),y:rnd(-1,1)}; const norm=()=>{const m=Math.hypot(vel.x,vel.y)||1; vel.x/=m; vel.y/=m}; norm();
-    const place=()=>{btn.style.position='absolute'; btn.style.left=(pos.x-state.size/2)+'px'; btn.style.top=(pos.y-state.size/2)+'px';};
-    place();
-    function tick(ts){
-      if(!state.inPlay) return;
-      const dt=(state.lastStamp?(ts-state.lastStamp):16)/1000; state.lastStamp=ts;
-      const sp= state.speed*140; const r=state.size/2, w=els.stage.clientWidth, h=els.stage.clientHeight;
-      pos.x+=vel.x*sp*dt; pos.y+=vel.y*sp*dt;
-      if(pos.x<r||pos.x>w-r) vel.x*=-1;
-      if(pos.y<r||pos.y>h-r) vel.y*=-1;
-      pos.x=clamp(pos.x,r,w-r); pos.y=clamp(pos.y,r,h-r); place(); requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-  function tapped(){
-    if(!state.inPlay) return;
-    state.count++; beep(520,60,'square'); vibe(30);
-    els.hudC.textContent=`Progreso: ${state.count}`;
-    progressBar(state.count, lvl.goal);
-    if(state.count>=lvl.goal) return completeLevel();
-  }
-  btn.addEventListener('click', tapped);
-  state.inPlay=true; state.count=0; state.lastStamp=0; els.status.textContent='¡En juego! Toca el botón.';
-}
-function playHold(){
-  clearStage();
-  const lvl=LEVELS[state.levelIndex];
-  const btn=document.createElement('div');
-  btn.className='big'+(lvl.move?' moving':''); btn.innerHTML=`SOSTENER<br><small>${lvl.holdSec}s</small>`;
-  btn.style.width=btn.style.height=state.size+'px';
-  els.stage.appendChild(btn);
-  let holding=false, t0=0, acc=0;
-
-  if(lvl.move){
-    let pos={x:els.stage.clientWidth/2,y:els.stage.clientHeight/2};
-    let vel={x:rnd(-1,1),y:rnd(-1,1)}; const norm=()=>{const m=Math.hypot(vel.x,vel.y)||1; vel.x/=m; vel.y/=m}; norm();
-    const place=()=>{btn.style.position='absolute'; btn.style.left=(pos.x-state.size/2)+'px'; btn.style.top=(pos.y-state.size/2)+'px';};
-    place();
-    function tick(ts){
-      if(!state.inPlay) return;
-      const dt=(state.lastStamp?(ts-state.lastStamp):16)/1000; state.lastStamp=ts;
-      const sp= state.speed*120; const r=state.size/2, w=els.stage.clientWidth, h=els.stage.clientHeight;
-      pos.x+=vel.x*sp*dt; pos.y+=vel.y*sp*dt;
-      if(pos.x<r||pos.x>w-r) vel.x*=-1;
-      if(pos.y<r||pos.y>h-r) vel.y*=-1;
-      pos.x=clamp(pos.x,r,w-r); pos.y=clamp(pos.y,r,h-r); place();
-      if(holding){ acc=(performance.now()-t0)/1000; btn.style.filter=`brightness(${1+Math.min(acc/lvl.holdSec,1)*0.3})`; if(acc>=lvl.holdSec){ holding=false; btn.style.filter='brightness(1)'; state.count++; beep(600,70,'triangle'); vibe(50); els.hudC.textContent=`Progreso: ${state.count}/${lvl.goal}`; progressBar(state.count,lvl.goal); if(state.count>=lvl.goal) return completeLevel(); } }
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-  const start=()=>{ if(!state.inPlay||holding) return; holding=true; t0=performance.now(); els.status.textContent='Sosteniendo…'; };
-  const end=()=>{ holding=false; btn.style.filter='brightness(1)'; els.status.textContent='En juego'; };
-  btn.addEventListener('mousedown', start); window.addEventListener('mouseup', end);
-  btn.addEventListener('touchstart', (e)=>{e.preventDefault(); start();},{passive:false});
-  window.addEventListener('touchend', end);
-  state.inPlay=true; state.count=0; state.lastStamp=0; els.status.textContent='¡En juego! Mantén presionado el botón.';
-}
-function playAlt(){
-  clearStage();
-  const lvl=LEVELS[state.levelIndex];
-  const wrap=document.createElement('div'); wrap.className='padWrap';
-  const L=document.createElement('div'); L.className='pad'; L.textContent='IZQUIERDA';
-  const R=document.createElement('div'); R.className='pad'; R.textContent='DERECHA';
-  wrap.append(L,R); els.stage.appendChild(wrap);
-  let expect='L'; const mark=(s)=>{ expect=s; (s==='L'?L:R).classList.add('active'); (s==='L'?R:L).classList.remove('active'); };
-  mark('L');
-  function hit(side){
-    if(!state.inPlay) return;
-    if(side===expect){ state.count++; beep(520,45,'square'); vibe(30); els.hudC.textContent=`Progreso: ${state.count}/${lvl.goal}`; progressBar(state.count,lvl.goal); mark(expect==='L'?'R':'L'); if(state.count>=lvl.goal) return completeLevel(); }
-    else{ beep(220,70,'sawtooth'); }
-  }
-  L.onclick=()=>hit('L'); R.onclick=()=>hit('R');
-  window.addEventListener('keydown',(e)=>{ if(e.code==='ArrowLeft'){e.preventDefault(); hit('L');} if(e.code==='ArrowRight'){e.preventDefault(); hit('R');} });
-  state.inPlay=true; state.count=0; els.status.textContent='¡En juego! Alterna IZQ ↔ DER.';
-}
-function playTrack(){
-  clearStage();
-  const lvl=LEVELS[state.levelIndex];
-  const dot=document.createElement('div'); dot.className='big moving';
-  dot.style.width=dot.style.height=state.size+'px'; dot.innerHTML=`SIGUE AQUÍ<br><small>${lvl.goal.toFixed(1)}s</small>`;
-  els.stage.appendChild(dot);
-  let pos={x:els.stage.clientWidth/2,y:els.stage.clientHeight/2};
-  let vel={x:rnd(-1,1),y:rnd(-1,1)}; const norm=()=>{const m=Math.hypot(vel.x,vel.y)||1; vel.x/=m; vel.y/=m}; norm();
-  const place=()=>{dot.style.left=(pos.x-state.size/2)+'px'; dot.style.top=(pos.y-state.size/2)+'px';};
-  place();
-  let inside=false;
-  function inDot(x,y){ const r=dot.getBoundingClientRect(); return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom; }
-  window.addEventListener('mousemove',(e)=>{ inside=inDot(e.clientX,e.clientY); },{passive:true});
-  window.addEventListener('touchmove',(e)=>{ const t=e.touches[0]; inside=inDot(t.clientX,t.clientY); },{passive:true});
-  dot.addEventListener('mouseenter',()=>inside=true); dot.addEventListener('mouseleave',()=>inside=false);
-  function tick(ts){
-    if(!state.inPlay) return;
-    const dt=(state.lastStamp?(ts-state.lastStamp):16)/1000; state.lastStamp=ts;
-    const sp=(lvl.speed||0.9)*110; const r=state.size/2, w=els.stage.clientWidth, h=els.stage.clientHeight;
-    pos.x+=vel.x*sp*dt; pos.y+=vel.y*sp*dt;
-    if(pos.x<r||pos.x>w-r) vel.x*=-1; if(pos.y<r||pos.y>h-r) vel.y*=-1;
-    pos.x=clamp(pos.x,r,w-r); pos.y=clamp(pos.y,r,h-r); place();
-    if(inside){ state.trackTimer+=dt; dot.style.filter=`brightness(${1+Math.min(state.trackTimer/lvl.goal,1)*0.3})`; els.hudC.textContent=`Progreso: ${state.trackTimer.toFixed(1)}s / ${lvl.goal.toFixed(1)}s`; progressBar(state.trackTimer,lvl.goal); if(state.trackTimer>=lvl.goal) return completeLevel(); }
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-  state.inPlay=true; state.trackTimer=0; state.lastStamp=0; els.status.textContent='¡En juego! Mantén el puntero/dedo dentro.';
-}
-
-/* ======= Control general ======= */
-function startLevel(){
-  const lvl = LEVELS[state.levelIndex] || LEVELS[0];
-  setHUD(lvl);
-  els.status.textContent='Preparando…';
-  try{
-    if(lvl.type==='tap') return playTap();
-    if(lvl.type==='hold') return playHold();
-    if(lvl.type==='alt') return playAlt();
-    if(lvl.type==='track') return playTrack();
-  }catch(err){
-    console.error(err);
-    els.stage.innerHTML = `<div class="hint">No pude iniciar el nivel. Recarga la página.<br/>Detalle: ${err?.message||err}</div>`;
-  }
-}
-function completeLevel(){
-  state.inPlay=false; vibe(60); beep(660,120,'triangle'); setTimeout(()=>beep(880,120,'triangle'),120);
-  const next = LEVELS[state.levelIndex+1];
-  const newProgress = Math.max(storage.progress, LEVELS[state.levelIndex].id + (next?1:0));
-  storage.progress = newProgress;
-  buildLevelList();
-  els.ov.classList.add('show');
-  els.ovText.textContent = next ? `¡Excelente! Desbloqueaste el nivel ${next.id}: ${next.name}.` : 'Has completado todos los niveles disponibles.';
-}
-
-/* ======= Eventos UI ======= */
-els.btnStart.onclick = startLevel;
-els.btnMenu.onclick  = ()=>{ selectLevel(state.levelIndex); els.ov.classList.remove('show'); };
-els.btnNext.onclick  = ()=>{ if(state.levelIndex<LEVELS.length-1){ selectLevel(state.levelIndex+1); startLevel(); } else { els.ov.classList.remove('show'); } };
-els.btnReplay.onclick= ()=>{ els.ov.classList.remove('show'); startLevel(); };
-
-els.optSound.onchange = ()=> state.soundOn = els.optSound.checked;
-els.optVibe.onchange  = ()=> state.vibeOn  = els.optVibe.checked;
-els.optLeft.onchange  = ()=>{ state.lefty  = els.optLeft.checked; if(LEVELS[state.levelIndex].type==='alt'){ selectLevel(state.levelIndex); startLevel(); } };
-els.optAuto.onchange  = ()=>{ state.auto = els.optAuto.checked; storage.autostart = state.auto; };
-
-/* ======= Auto-instalación PWA botón ======= */
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', (e)=>{
-  e.preventDefault();
-  deferredPrompt = e;
-  els.btnInstall.style.display = 'inline-block';
-});
-els.btnInstall.addEventListener('click', async ()=>{
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  els.btnInstall.style.display = 'none';
-});
-
-/* ======= SW registro ======= */
-if('serviceWorker' in navigator){
-  window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js'));
-}
-
-/* ======= Inicio ======= */
-function init(){
-  buildLevelList();
-  selectLevel(0);
-  // Cargar preferencia de auto-inicio
-  state.auto = storage.autostart;
-  els.optAuto.checked = state.auto;
-
-  els.status.textContent = state.auto
-    ? 'Auto-inicio activado: comenzando Nivel 1…'
-    : 'Nivel 1 listo. Pulsa “Iniciar”.';
-
-  // Auto-inicio si está activado o si la URL trae ?auto=1
-  const urlAuto = new URLSearchParams(location.search).get('auto') === '1';
-  if(state.auto || urlAuto){
-    setTimeout(()=> startLevel(), 500);
-  }
-
-  // Fondo decorativo suave
-  try{ spawnBubbles(); }catch{}
-}
-function spawnBubbles(){
-  const s = document.querySelector('.card');
-  for(let i=0;i<10;i++){
-    const b=document.createElement('div'); b.style.position='absolute'; b.style.borderRadius='999px'; b.style.pointerEvents='none'; b.style.opacity='.18';
-    const size=rnd(40,120); b.style.width=size+'px'; b.style.height=size+'px';
-    b.style.left=rnd(0, s.clientWidth-size)+'px'; b.style.top=rnd(0, s.clientHeight-size)+'px';
-    b.style.background='radial-gradient(circle at 30% 30%, #60a5fa55 0 40%, transparent 42%), #10244a';
-    s.appendChild(b); (function anim(el){ const toX=rnd(-30,30),toY=rnd(-30,30),dur=rnd(6,12)*1000; const x0=parseFloat(el.style.left),y0=parseFloat(el.style.top),t0=performance.now();
-      function step(t){ const p=Math.min((t-t0)/dur,1),e=0.5-Math.cos(p*Math.PI)/2; el.style.left=(x0+toX*e)+'px'; el.style.top=(y0+toY*e)+'px'; if(p<1) requestAnimationFrame(step); else anim(el); }
-      requestAnimationFrame(step);
-    })(b);
-  }
-}
-init();
+})();
 </script>
 </body>
 </html>
